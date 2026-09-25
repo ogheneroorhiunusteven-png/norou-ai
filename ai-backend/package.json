@@ -1,0 +1,6 @@
+{
+  "name": "level-up-ai-backend",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Minimal Vercel Edge Function proxying to the Anthropic API. Keeps the API key server-side so the Level Up app never embeds it."
+}

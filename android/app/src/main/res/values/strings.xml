@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Norou AI</string>
+    <string name="title_activity_main">Norou AI</string>
+    <string name="package_name">com.yourname.levelup</string>
+    <string name="custom_url_scheme">com.yourname.levelup</string>
+</resources>

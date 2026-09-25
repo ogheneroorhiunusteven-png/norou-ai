@@ -1,0 +1,74 @@
+name: Build iOS IPA (unsigned)
+
+# Run manually from the Actions tab, or automatically on pushes to main.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build-ipa:
+    # macOS runner — required for Xcode. Free on public repos.
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Build web app (Next.js static export -> ./out)
+        run: npm run build
+
+      - name: Add iOS platform
+        # Generated fresh in CI so the ios/ folder doesn't need committing.
+        # Skipped automatically if the folder IS committed.
+        run: |
+          if [ ! -d "ios" ]; then
+            npx cap add ios
+          fi
+          npx cap sync ios
+
+      - name: Show available Xcode / scheme info
+        working-directory: ios/App
+        run: |
+          xcodebuild -version
+          xcodebuild -list -workspace App.xcworkspace || true
+
+      - name: Build unsigned archive
+        working-directory: ios/App
+        run: |
+          xcodebuild \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath "$PWD/build/App.xcarchive" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            ENABLE_BITCODE=NO \
+            archive
+
+      - name: Package .app into an unsigned .ipa
+        working-directory: ios/App
+        run: |
+          mkdir -p build/Payload
+          cp -R build/App.xcarchive/Products/Applications/App.app build/Payload/
+          cd build
+          zip -qr LevelUp-unsigned.ipa Payload
+          ls -lh LevelUp-unsigned.ipa
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LevelUp-unsigned-ipa
+          path: ios/App/build/LevelUp-unsigned.ipa
+          retention-days: 30

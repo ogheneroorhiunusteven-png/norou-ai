@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #000000;
+  --bg-2: #1a1a1a;
+  --card: #2a2a2a;
+  --accent: #a855f7;
+}
+
+html,
+body {
+  background: #000000;
+  color: #ffffff;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+input,
+textarea,
+select {
+  color-scheme: dark;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes levelPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out;
+}
+.animate-popIn {
+  animation: popIn 0.25s ease-out;
+}
+.animate-slideUp {
+  animation: slideUp 0.3s ease-out;
+}
+.animate-levelPop {
+  animation: levelPop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ---------------------------------------------------------------
+   iOS native (Capacitor) support
+   Keeps content clear of the notch / Dynamic Island and the home
+   indicator, and disables text selection + pull-to-refresh so the
+   web view feels like a native app rather than a web page.
+   --------------------------------------------------------------- */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* html/body get an explicit height so descendants using height:100%
+   (like .app-shell below) have something real to size against —
+   min-h-screen (100vh) previously wasn't aware of the safe-area
+   padding and silently overflowed body's box, clipping content. */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  /* Prevent iOS rubber-band scrolling of the whole shell */
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Scroll is scoped to .app-scroll (the main content area) only —
+   NOT a blanket "every direct child of body" rule. Fixed overlays,
+   the bottom nav, and modals must NOT be inside a scrolling box. */
+.app-shell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-scroll {
+  flex: 1 1 auto;
+  min-height: 0; /* required for flex children to actually shrink/scroll */
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Native feel: no long-press text selection or callout menus */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ...except in actual text inputs */
+input,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
