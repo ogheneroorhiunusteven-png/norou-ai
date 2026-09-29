@@ -74,6 +74,7 @@ interface StoreContext {
   // budget
   getBudgetExpenses: (key?: string) => BudgetExpense[];
   setMonthlyIncome: (income: number) => void;
+  setUnexpectedIncome: (month: string, income: number) => void;
   addBudgetExpense: (e: Omit<BudgetExpense, "id">, key?: string) => void;
   updateBudgetExpense: (e: BudgetExpense, key?: string) => void;
   deleteBudgetExpense: (id: string, key?: string) => void;
@@ -342,6 +343,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     mutate((d) => { d.budget.monthlyIncome = Math.max(0, Math.round(income * 100) / 100); });
   }, [mutate]);
 
+  const setUnexpectedIncome = useCallback((month: string, income: number) => {
+    mutate((d) => {
+      const value = Math.max(0, Math.round(income * 100) / 100);
+      if (value === 0) delete d.unexpectedIncomeByMonth[month];
+      else d.unexpectedIncomeByMonth[month] = value;
+    });
+  }, [mutate]);
+
   const addBudgetExpense = useCallback((e: Omit<BudgetExpense, "id">, key: string = new Date().toISOString().slice(0, 7)) => {
     mutate((d) => {
       if (!d.budgetExpenses[key]) d.budgetExpenses[key] = [];
@@ -585,6 +594,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     getMeals,
     getBudgetExpenses,
     setMonthlyIncome,
+    setUnexpectedIncome,
     addBudgetExpense,
     updateBudgetExpense,
     deleteBudgetExpense,

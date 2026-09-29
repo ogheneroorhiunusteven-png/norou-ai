@@ -94,13 +94,13 @@ export function NorouOS() {
     setAutopilot(true); setStatus("planning");
     const priority = [...openTasks].sort((a, b) => ({ high: 0, medium: 1, low: 2 }[a.priority] - { high: 0, medium: 1, low: 2 }[b.priority])).slice(0, 3);
     if (!priority.length) {
-      addTask({ title: "Plan tomorrow with Norou", dueDate: context.today, completed: false, priority: "medium", category: "Autopilot", tags: ["norou-autopilot"], recurrence: "none" });
+      addTask({ title: "Plan tomorrow with Nova", dueDate: context.today, completed: false, priority: "medium", category: "Autopilot", tags: ["norou-autopilot"], recurrence: "none" });
     } else {
       priority.forEach((task, i) => {
         if (i === 0) showToast(`Autopilot selected: ${task.title}`);
       });
     }
-    setPlannerResult(`AUTOPILOT READY\n\n${priority.length ? priority.map((t, i) => `${i + 1}. ${t.title}`).join("\n") : "1. Plan tomorrow with Norou"}\n\nNorou will keep consequential actions behind confirmation.`);
+    setPlannerResult(`AUTOPILOT READY\n\n${priority.length ? priority.map((t, i) => `${i + 1}. ${t.title}`).join("\n") : "1. Plan tomorrow with Nova"}\n\nNova will keep consequential actions behind confirmation.`);
     window.setTimeout(() => setAutopilot(false), 900);
   };
 
@@ -125,7 +125,7 @@ export function NorouOS() {
     const value = tutorInput.trim(); if (!value || busy) return;
     setBusy(true); setStatus("thinking");
     try {
-      const reply = await sendChatMessage([{ role: "user", content: `You are Norou Tutor. Teach this clearly, then give me 3 questions to check understanding. Do not simply give an answer if this is homework.\n\n${value}` }], state, "study");
+      const reply = await sendChatMessage([{ role: "user", content: `You are Nova Tutor. Teach this clearly, then give me 3 questions to check understanding. Do not simply give an answer if this is homework.\n\n${value}` }], state, "study");
       setTutorResult(reply.text);
     } catch (e) { setTutorResult(e instanceof Error ? e.message : "Tutor unavailable."); }
     finally { setBusy(false); }
@@ -151,7 +151,7 @@ export function NorouOS() {
     try { localStorage.setItem("norou:permissions", JSON.stringify(next)); } catch {}
   };
 
-  const statusText: Record<HoloState, string> = { idle: "NOROU ONLINE", thinking: "THINKING", planning: "PLANNING", searching: "SEARCHING", speaking: "SPEAKING", offline: "OFFLINE MODE" };
+  const statusText: Record<HoloState, string> = { idle: "NOVA ONLINE", thinking: "THINKING", planning: "PLANNING", searching: "SEARCHING", speaking: "SPEAKING", offline: "OFFLINE MODE" };
   const memoryCount = state.memories.length;
   const todayKey = dateKey();
   const momentum = Math.min(100, Math.round((weekCompletion * 0.65) + (Math.min(state.streak.current, 14) / 14) * 35));
@@ -161,8 +161,8 @@ export function NorouOS() {
     const suggestions: string[] = [];
     if (highPriority) suggestions.push(`You have ${highPriority} high-priority task${highPriority === 1 ? "" : "s"} open.`);
     if (activeGoal && activeGoal.progress < 50) suggestions.push(`Your goal “${activeGoal.title}” is at ${activeGoal.progress}%.`);
-    if (context.events.length === 0) suggestions.push("There are no calendar events today, so Norou can help you use the open time deliberately.");
-    if (!suggestions.length) suggestions.push("Your current plan is clear. Norou can help you choose the next useful action.");
+    if (context.events.length === 0) suggestions.push("There are no calendar events today, so Nova can help you use the open time deliberately.");
+    if (!suggestions.length) suggestions.push("Your current plan is clear. Nova can help you choose the next useful action.");
     return suggestions.slice(0, 2);
   }, [highPriority, activeGoal, context.events.length]);
 
@@ -171,7 +171,7 @@ export function NorouOS() {
       <Card className="norou-os-hero p-5">
         <div className="flex items-center gap-4">
           <NorouOrb size="compact" active={holoState !== "idle"} />
-          <div className="min-w-0 flex-1"><div className="text-[10px] font-black tracking-[.25em] text-[#b88cff]">{statusText[holoState]}</div><h2 className="text-2xl font-black text-white mt-1">Norou OS</h2><p className="text-xs text-neutral-400 mt-1">Your context-aware personal AI operating layer.</p></div>
+          <div className="min-w-0 flex-1"><div className="text-[10px] font-black tracking-[.25em] text-[#b88cff]">{statusText[holoState]}</div><h2 className="text-2xl font-black text-white mt-1">Nova OS</h2><p className="text-xs text-neutral-400 mt-1">Your context-aware personal AI operating layer.</p></div>
           <div className="text-right"><div className="text-xl font-black text-white">Lv {li.level}</div><div className="text-[10px] text-neutral-500">{state.xp} XP</div></div>
         </div>
         <div className="grid grid-cols-3 gap-2 mt-5"><div className="rounded-2xl bg-black/25 p-3"><div className="text-lg font-black text-white">🔥 {state.streak.current}</div><div className="text-[9px] text-neutral-500">STREAK</div></div><div className="rounded-2xl bg-black/25 p-3"><div className="text-lg font-black text-white">{memoryCount}</div><div className="text-[9px] text-neutral-500">MEMORIES</div></div><div className="rounded-2xl bg-black/25 p-3"><div className="text-lg font-black text-white">{weekCompletion}%</div><div className="text-[9px] text-neutral-500">WEEK</div></div></div>
@@ -179,7 +179,7 @@ export function NorouOS() {
 
       <Card className="p-5">
         <SectionTitle>🔮 Proactive Brain</SectionTitle>
-        <p className="text-xs text-neutral-500 mb-3">Norou watches your local context and surfaces useful next steps without silently changing anything.</p>
+        <p className="text-xs text-neutral-500 mb-3">Nova watches your local context and surfaces useful next steps without silently changing anything.</p>
         <div className="space-y-2">{proactive.map((item) => <div key={item} className="rounded-2xl bg-[#a855f7]/10 border border-[#a855f7]/15 p-3 text-sm text-neutral-200">{item}</div>)}</div>
       </Card>
 
@@ -191,7 +191,7 @@ export function NorouOS() {
 
       <Card className="p-5">
         <SectionTitle>🧠 Context Engine</SectionTitle>
-        <p className="text-xs text-neutral-500 mb-3">Norou connects what is happening now instead of treating every feature as a separate app.</p>
+        <p className="text-xs text-neutral-500 mb-3">Nova connects what is happening now instead of treating every feature as a separate app.</p>
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-xl bg-white/5 p-3"><div className="text-[10px] uppercase text-neutral-500">Today</div><div className="text-sm font-bold text-white mt-1">{context.events.length} calendar event{context.events.length === 1 ? "" : "s"}</div></div>
           <div className="rounded-xl bg-white/5 p-3"><div className="text-[10px] uppercase text-neutral-500">Focus</div><div className="text-sm font-bold text-white mt-1">{nextActions[0]?.title || "Nothing urgent"}</div></div>
@@ -212,7 +212,7 @@ export function NorouOS() {
 
       <Card className="p-5">
         <SectionTitle>🧭 Mission Mode</SectionTitle>
-        {activeGoal ? <><div className="flex items-center justify-between"><div className="text-sm font-bold text-white">{activeGoal.title}</div><div className="text-xs text-neutral-500">{activeGoal.progress}%</div></div><ProgressBar value={activeGoal.progress} /><div className="mt-3 text-xs text-neutral-500">{openTasks.length ? `${Math.min(5, openTasks.length)} open tasks can become mission objectives.` : "Create tasks to turn this goal into a mission."}</div></> : <p className="text-sm text-neutral-500">Create a goal and Norou will use it as your active mission.</p>}
+        {activeGoal ? <><div className="flex items-center justify-between"><div className="text-sm font-bold text-white">{activeGoal.title}</div><div className="text-xs text-neutral-500">{activeGoal.progress}%</div></div><ProgressBar value={activeGoal.progress} /><div className="mt-3 text-xs text-neutral-500">{openTasks.length ? `${Math.min(5, openTasks.length)} open tasks can become mission objectives.` : "Create tasks to turn this goal into a mission."}</div></> : <p className="text-sm text-neutral-500">Create a goal and Nova will use it as your active mission.</p>}
       </Card>
 
       <Card className="p-5">
@@ -222,7 +222,7 @@ export function NorouOS() {
 
       <Card className="p-5" id="norou-autopilot">
         <SectionTitle>🤖 Autopilot</SectionTitle>
-        <p className="text-xs text-neutral-500 mb-3">Builds a suggested sequence from your current tasks and goals. Norou never performs consequential external actions silently.</p>
+        <p className="text-xs text-neutral-500 mb-3">Builds a suggested sequence from your current tasks and goals. Nova never performs consequential external actions silently.</p>
         <Button className="w-full" onClick={runAutopilot} disabled={autopilot}>{autopilot ? "Preparing Autopilot…" : "Start Autopilot →"}</Button>
         {plannerResult && <div className="mt-4 rounded-2xl bg-white/5 p-4 text-sm leading-6 text-neutral-200 whitespace-pre-wrap">{plannerResult}</div>}
       </Card>
@@ -242,17 +242,17 @@ export function NorouOS() {
 
       <Card className="p-5"><SectionTitle>🌳 Skill Tree</SectionTitle><p className="text-xs text-neutral-500 mb-3">Skills grow from activity, learning and completed work.</p><div className="space-y-3">{SKILLS.map((skill) => { const activityCount = state.activities.filter((a) => skill.cats.includes(a.category as never)).length; const completed = state.tasks.filter((t) => t.completed && (t.category || "").toLowerCase().includes(skill.name.toLowerCase().split(" ")[0])).length; const value = Math.min(100, activityCount * 10 + completed * 15 + (skill.name === "Discipline" ? state.streak.current * 3 : 0)); return <div key={skill.name}><div className="flex justify-between text-xs mb-1"><span className="font-bold text-white">{skill.icon} {skill.name}</span><span className="text-neutral-500">{value}%</span></div><ProgressBar value={value}/><div className="text-[10px] text-neutral-600 mt-1">{skill.color} pathway · {activityCount + completed} signals</div></div>; })}</div></Card>
 
-      <Card className="p-5"><SectionTitle>🎓 Norou Tutor</SectionTitle><p className="text-xs text-neutral-500 mb-3">Learn concepts, work through problems and test your understanding.</p><textarea className={`${inputClass} min-h-24 resize-none`} value={tutorInput} onChange={(e) => setTutorInput(e.target.value)} placeholder="What do you want to learn?"/><Button className="w-full mt-2" onClick={tutor} disabled={!tutorInput.trim() || busy}>{busy ? "Teaching…" : "Teach me →"}</Button>{tutorResult && <div className="mt-4 rounded-2xl bg-white/5 p-4 text-sm leading-6 text-neutral-200 whitespace-pre-wrap">{tutorResult}</div>}</Card>
+      <Card className="p-5"><SectionTitle>🎓 Nova Tutor</SectionTitle><p className="text-xs text-neutral-500 mb-3">Learn concepts, work through problems and test your understanding.</p><textarea className={`${inputClass} min-h-24 resize-none`} value={tutorInput} onChange={(e) => setTutorInput(e.target.value)} placeholder="What do you want to learn?"/><Button className="w-full mt-2" onClick={tutor} disabled={!tutorInput.trim() || busy}>{busy ? "Teaching…" : "Teach me →"}</Button>{tutorResult && <div className="mt-4 rounded-2xl bg-white/5 p-4 text-sm leading-6 text-neutral-200 whitespace-pre-wrap">{tutorResult}</div>}</Card>
 
       <Card className="p-5"><SectionTitle>🕸️ Personal Knowledge Graph</SectionTitle><p className="text-xs text-neutral-500 mb-3">A live view of how your information connects.</p><div className="flex flex-wrap gap-2">{[`${state.goals.length} Goals`, `${state.tasks.length} Tasks`, `${state.notes.length} Notes`, `${state.memories.length} Memories`, `${state.calendarEvents.length} Events`, `${state.workouts.length} Workouts`].map((x) => <span key={x} className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-neutral-300">{x}</span>)}</div><div className="mt-3 rounded-2xl bg-black/20 p-4 text-xs leading-6 text-neutral-400">Goals connect to tasks. Tasks connect to calendar time. Notes and memories provide context. XP and analytics measure progress across the graph.</div></Card>
 
-      <Card className="p-5"><SectionTitle>⚡ Quick Actions</SectionTitle><div className="grid grid-cols-2 gap-2"><Button variant="ghost" onClick={() => document.getElementById("norou-autopilot")?.scrollIntoView({behavior:"smooth"})}>🤖 Autopilot</Button><Button variant="ghost" onClick={() => setTutorInput("Teach me the most important thing I should learn for my current goals.")}>🎓 Tutor</Button><Button variant="ghost" onClick={() => { addNote("Norou quick note", ""); showToast("Note created ✓"); }}>📝 New note</Button><Button variant="ghost" onClick={() => { addTask({ title: "Focus session", dueDate: todayKey, completed: false, priority: "medium", category: "Focus", tags: ["quick-action"], recurrence: "none" }); showToast("Focus task added ✓"); }}>🎯 Focus task</Button></div></Card>
+      <Card className="p-5"><SectionTitle>⚡ Quick Actions</SectionTitle><div className="grid grid-cols-2 gap-2"><Button variant="ghost" onClick={() => document.getElementById("norou-autopilot")?.scrollIntoView({behavior:"smooth"})}>🤖 Autopilot</Button><Button variant="ghost" onClick={() => setTutorInput("Teach me the most important thing I should learn for my current goals.")}>🎓 Tutor</Button><Button variant="ghost" onClick={() => { addNote("Nova quick note", ""); showToast("Note created ✓"); }}>📝 New note</Button><Button variant="ghost" onClick={() => { addTask({ title: "Focus session", dueDate: todayKey, completed: false, priority: "medium", category: "Focus", tags: ["quick-action"], recurrence: "none" }); showToast("Focus task added ✓"); }}>🎯 Focus task</Button></div></Card>
 
-      <Card className="p-5"><SectionTitle>🔐 Permission Centre</SectionTitle><p className="text-xs text-neutral-500 mb-3">Control how much autonomy each Norou tool has. External actions remain confirmation-based.</p><div className="space-y-2">{PERMISSION_DEFAULTS.map(([id, label]) => <div key={id} className="flex items-center gap-3 rounded-xl bg-white/5 p-3"><div className="flex-1"><div className="text-sm font-semibold text-white">{label}</div><div className="text-[10px] text-neutral-500">{id}</div></div><select value={permissions[id]} onChange={(e) => savePermission(id, e.target.value as PermissionLevel)} className="rounded-lg bg-[#222] border border-white/10 px-2 py-2 text-xs text-white"><option value="off">Off</option><option value="read">Read</option><option value="suggest">Suggest</option><option value="ask">Ask first</option></select></div>)}</div></Card>
+      <Card className="p-5"><SectionTitle>🔐 Permission Centre</SectionTitle><p className="text-xs text-neutral-500 mb-3">Control how much autonomy each Nova tool has. External actions remain confirmation-based.</p><div className="space-y-2">{PERMISSION_DEFAULTS.map(([id, label]) => <div key={id} className="flex items-center gap-3 rounded-xl bg-white/5 p-3"><div className="flex-1"><div className="text-sm font-semibold text-white">{label}</div><div className="text-[10px] text-neutral-500">{id}</div></div><select value={permissions[id]} onChange={(e) => savePermission(id, e.target.value as PermissionLevel)} className="rounded-lg bg-[#222] border border-white/10 px-2 py-2 text-xs text-white"><option value="off">Off</option><option value="read">Read</option><option value="suggest">Suggest</option><option value="ask">Ask first</option></select></div>)}</div></Card>
 
       <Card className="p-5"><SectionTitle>📊 Personal Analytics</SectionTitle><div className="grid grid-cols-2 gap-3"><div className="rounded-xl bg-white/5 p-3"><div className="text-2xl font-black text-white">{weekCompletion}%</div><div className="text-[11px] text-neutral-500">7-day completion</div></div><div className="rounded-xl bg-white/5 p-3"><div className="text-2xl font-black text-white">{state.xp}</div><div className="text-[11px] text-neutral-500">lifetime XP</div></div></div></Card>
 
-      <Card className="p-5"><SectionTitle>👁️ Vision Mode</SectionTitle><p className="text-xs text-neutral-500 mb-3">Upload an image and ask Norou to explain it.</p><input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => onImage(e.target.files?.[0])}/><button onClick={() => fileRef.current?.click()} className="w-full rounded-2xl border border-dashed border-white/15 bg-white/[0.03] p-6 text-center text-sm text-neutral-300">{imageUrl ? "Change image" : "📷 Choose an image"}</button>{imageUrl && <img src={imageUrl} alt="Selected for Norou vision analysis" className="mt-3 max-h-56 w-full rounded-2xl object-contain bg-black"/>}<textarea className={`${inputClass} mt-3 min-h-20 resize-none`} value={visionPrompt} onChange={(e) => setVisionPrompt(e.target.value)}/><Button className="w-full mt-2" onClick={analyseImage} disabled={!imageUrl || visionBusy}>{visionBusy ? "Analysing…" : "Analyse with Norou →"}</Button>{visionResult && <div className="mt-4 rounded-2xl bg-white/5 p-4 text-sm leading-6 text-neutral-200 whitespace-pre-wrap">{visionResult}</div>}</Card>
+      <Card className="p-5"><SectionTitle>👁️ Vision Mode</SectionTitle><p className="text-xs text-neutral-500 mb-3">Upload an image and ask Nova to explain it.</p><input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => onImage(e.target.files?.[0])}/><button onClick={() => fileRef.current?.click()} className="w-full rounded-2xl border border-dashed border-white/15 bg-white/[0.03] p-6 text-center text-sm text-neutral-300">{imageUrl ? "Change image" : "📷 Choose an image"}</button>{imageUrl && <img src={imageUrl} alt="Selected for Nova vision analysis" className="mt-3 max-h-56 w-full rounded-2xl object-contain bg-black"/>}<textarea className={`${inputClass} mt-3 min-h-20 resize-none`} value={visionPrompt} onChange={(e) => setVisionPrompt(e.target.value)}/><Button className="w-full mt-2" onClick={analyseImage} disabled={!imageUrl || visionBusy}>{visionBusy ? "Analysing…" : "Analyse with Nova →"}</Button>{visionResult && <div className="mt-4 rounded-2xl bg-white/5 p-4 text-sm leading-6 text-neutral-200 whitespace-pre-wrap">{visionResult}</div>}</Card>
     </div>
   );
 }

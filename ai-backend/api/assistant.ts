@@ -1,7 +1,7 @@
 // Vercel Edge Function: /api/assistant
 //
 // Gemini is used through this server-side proxy so the API key is never
-// shipped inside the Norou AI app bundle. The app only needs this backend URL.
+// shipped inside the Nova AI app bundle. The app only needs this backend URL.
 
 export const config = { runtime: "edge" };
 
@@ -51,7 +51,7 @@ interface RequestBody {
 }
 
 function buildSystemPrompt(context?: AppContext, mode?: string): string {
-  const base = `You are the built-in assistant for "Norou AI," a personal productivity, habit, fitness and wellness app. You are also an action agent for the app. You may answer questions, but when the user asks you to create, edit, complete, delete, schedule, log, rename, start or otherwise change something in Norou, perform the action by appending one or more exact action markers.
+  const base = `You are the built-in assistant for "Nova AI," a personal productivity, habit, fitness and wellness app. You are also an action agent for the app. You may answer questions, but when the user asks you to create, edit, complete, delete, schedule, log, rename, start or otherwise change something in Nova, perform the action by appending one or more exact action markers.
 
 Action marker format: [ACTION:{"type":"add_task","title":"Finish IT coursework","priority":"high"}]
 Only use the documented action types below. Never invent an action type. For edits/deletes, use the visible item title/name as the match value.
@@ -165,7 +165,7 @@ export default async function handler(req: Request): Promise<Response> {
     process.env.OLLAMA_ENABLED === "true"
   );
   if (!hasProvider) {
-    return new Response(JSON.stringify({ error: "No model provider is configured. Norou can still run its local tools for free; enable Ollama for a fully local AI model." }), { status: 503, headers });
+    return new Response(JSON.stringify({ error: "No model provider is configured. Nova can still run its local tools for free; enable Ollama for a fully local AI model." }), { status: 503, headers });
   }
 
   let body: RequestBody;
@@ -233,7 +233,7 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     if (freeOnly && profile === "auto") {
-      return new Response(JSON.stringify({ error: "Free-only mode is enabled, but no local/free model is configured. Norou's local tools remain available without an API." }), { status: 503, headers });
+      return new Response(JSON.stringify({ error: "Free-only mode is enabled, but no local/free model is configured. Nova's local tools remain available without an API." }), { status: 503, headers });
     }
 
     if (!apiKey) {

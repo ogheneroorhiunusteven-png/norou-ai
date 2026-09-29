@@ -3,8 +3,12 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Norou AI",
-  description: "A premium productivity, fitness and lifestyle app with lightweight RPG progression and a built-in AI assistant.",
+  title: "Nova AI",
+  description: "Nova AI — your personal AI operating system for planning, wellness, fuel, money and everyday life.",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export const viewport: Viewport = {

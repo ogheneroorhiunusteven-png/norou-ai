@@ -17,7 +17,7 @@ set -euo pipefail
 #   - Run:  gh auth login       (opens your browser, no token to paste)
 # ============================================================
 
-REPO_NAME="${1:-norou-ai}"
+REPO_NAME="${1:-level-up}"
 
 command -v gh >/dev/null 2>&1 || {
   echo "GitHub CLI not found. Install it first: https://cli.github.com"

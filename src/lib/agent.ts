@@ -12,38 +12,4 @@ export function loadAgentHistory(): AgentHistoryEntry[] { if (typeof window === 
 export function saveAgentHistory(history: AgentHistoryEntry[]) { if (typeof window !== 'undefined') window.localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0,20))); }
 export function categoryForAction(type:string): keyof PermissionMap { if(type.startsWith('delete_'))return'destructive'; if(type.includes('task'))return'tasks'; if(type.includes('routine'))return'routines'; if(type.includes('goal'))return'goals'; if(type.includes('note'))return'notes'; if(type.includes('event'))return'calendar'; if(type.includes('alarm'))return'alarms'; if(type.includes('memory'))return'memories'; if(type.includes('water')||type.includes('steps'))return'health'; if(type.includes('workout'))return'workouts'; if(type==='start_focus')return'focus'; return'tasks'; }
 export interface AutopilotBlock { id:string; time:string; title:string; duration:number; taskId?:string; }
-export function autopilotPlan(state: AppState): AutopilotBlock[] {
-  const rank = { high: 0, medium: 1, low: 2 };
-  const open = state.tasks
-    .filter((task) => !task.completed)
-    .sort((a, b) => rank[a.priority] - rank[b.priority]);
-  const now = new Date();
-  const minutes = now.getHours() * 60 + now.getMinutes();
-  const start = Math.max(minutes + 15, 8 * 60);
-  const blocks: AutopilotBlock[] = open.slice(0, 4).map((task, index) => {
-    const begin = start + index * 55;
-    const hour = Math.floor((begin % (24 * 60)) / 60).toString().padStart(2, "0");
-    const minute = (begin % 60).toString().padStart(2, "0");
-    return {
-      id: `task-${task.id}`,
-      time: `${hour}:${minute}`,
-      title: task.title,
-      duration: 45,
-      taskId: task.id,
-    };
-  });
-
-  if (blocks.length === 0) {
-    const focusStart = start % (24 * 60);
-    const hour = Math.floor(focusStart / 60).toString().padStart(2, "0");
-    const minute = (focusStart % 60).toString().padStart(2, "0");
-    blocks.push({
-      id: "focus",
-      time: `${hour}:${minute}`,
-      title: "Choose one important goal and start a focus session",
-      duration: 25,
-    });
-  }
-
-  return blocks;
-}
+export function autopilotPlan(state:AppState): AutopilotBlock[] { const rank={high:0,medium:1,low:2}; const open=state.tasks.filter(t=>!t.completed).sort((a,b)=>rank[a.priority]-rank[b.priority]); const now=new Date(); const minutes=now.getHours()*60+now.getMinutes(); const start=Math.max(minutes+15,8*60); const blocks: AutopilotBlock[] = open.slice(0,4).map((task,i)=>{const begin=start+i*55;const h=Math.floor((begin%(24*60))/60).toString().padStart(2,'0');const m=(begin%60).toString().padStart(2,'0');return{id:`task-${task.id}`,time:`${h}:${m}`,title:task.title,duration:45,taskId:task.id};}); if(!blocks.length){const h=Math.floor((start%(24*60))/60).toString().padStart(2,'0');const m=(start%60).toString().padStart(2,'0');blocks.push({id:'focus',time:`${h}:${m}`,title:'Choose one important goal and start a focus session',duration:25,taskId:undefined});} return blocks; }

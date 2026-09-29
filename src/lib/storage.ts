@@ -15,6 +15,7 @@ export function defaultState(): AppState {
     meals: {},
     budget: { monthlyIncome: 0, needsPct: 50, wantsPct: 30, savingsPct: 20, currency: "GBP" },
     budgetExpenses: {},
+    unexpectedIncomeByMonth: {},
     goals: [],
     tasks: [],
     calendarEvents: [],
@@ -97,6 +98,7 @@ export function sanitize(raw: unknown): AppState {
       currency: str(rBudget.currency, d.budget.currency),
     },
     budgetExpenses: sanitizeBudgetExpenses(r.budgetExpenses),
+    unexpectedIncomeByMonth: Object.fromEntries(Object.entries(rec(r.unexpectedIncomeByMonth)).map(([key, value]) => [key, Math.max(0, num(value, 0))])),
     goals: (arr(r.goals).filter((g) => g && typeof g === "object") as unknown) as AppState["goals"],
     tasks: (arr(r.tasks)
       .filter((t) => t && typeof t === "object")

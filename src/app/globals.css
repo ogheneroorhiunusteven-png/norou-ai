@@ -203,7 +203,7 @@ textarea {
   user-select: text;
 }
 
-/* Norou command-centre polish */
+/* Nova command-centre polish */
 .norou-orb {
   box-shadow: 0 0 0 1px rgba(168,85,247,.22), 0 0 24px rgba(168,85,247,.22), inset 0 0 20px rgba(168,85,247,.12);
 }
@@ -214,7 +214,7 @@ textarea {
 .norou-pulse { animation: norouPulse 2.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .norou-pulse { animation: none; } }
 
-/* NOROU HOLOGRAM UI */
+/* NOVA HOLOGRAM UI */
 .norou-hero-card{position:relative;overflow:hidden;min-height:390px;border:1px solid rgba(168,85,247,.18);border-radius:30px;background:radial-gradient(circle at 50% 38%,rgba(80,160,255,.11),transparent 24%),radial-gradient(circle at 50% 45%,rgba(168,85,247,.14),transparent 48%),linear-gradient(180deg,rgba(15,15,22,.98),rgba(4,4,8,.98));box-shadow:inset 0 1px rgba(255,255,255,.05),0 20px 70px rgba(0,0,0,.35)}
 .norou-hero-card:before,.norou-hero-card:after{content:"";position:absolute;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,.22),transparent)}.norou-hero-card:before{top:56px}.norou-hero-card:after{bottom:72px}
 .norou-hero-topline{position:relative;z-index:4;display:flex;justify-content:space-between;padding:16px 18px 0;font-size:9px;font-weight:900;letter-spacing:.2em;color:rgba(255,255,255,.38)}.norou-hero-topline span:last-child{color:#b88cff}
@@ -228,11 +228,11 @@ textarea {
 @keyframes norouAura{0%,100%{transform:translate(-50%,-50%) scale(.94);opacity:.65}50%{transform:translate(-50%,-50%) scale(1.08);opacity:1}}@keyframes norouGrid{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}@keyframes norouSpin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}@keyframes norouSpinReverse{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(-360deg)}}@keyframes norouCore{0%,100%{transform:translate(-50%,-50%) scale(.94);opacity:.82}50%{transform:translate(-50%,-50%) scale(1.05);opacity:1}}@keyframes norouHot{0%,100%{transform:translate(-50%,-50%) scale(.8);opacity:.7}50%{transform:translate(-50%,-50%) scale(1.25);opacity:1}}@keyframes norouScan{0%,100%{transform:translate(-50%,-50%) translateY(-32px);opacity:0}20%,80%{opacity:.8}50%{transform:translate(-50%,-50%) translateY(32px)}}@keyframes norouFloat1{0%,100%{transform:translate(-50%,-50%) translate(0,0)}50%{transform:translate(-50%,-50%) translate(5px,-10px)}}@keyframes norouFloat2{0%,100%{transform:translate(-50%,-50%) translate(0,0)}50%{transform:translate(-50%,-50%) translate(-8px,7px)}}@keyframes norouBlink{0%,100%{opacity:.5}50%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.norou-holo *,.norou-holo{animation:none!important}}
 
-/* Norou OS v2 */
+/* Nova OS v2 */
 .norou-os-hero{position:relative;overflow:hidden;background:radial-gradient(circle at 10% 10%,rgba(168,85,247,.18),transparent 38%),radial-gradient(circle at 90% 90%,rgba(72,150,255,.10),transparent 34%),linear-gradient(145deg,#21122f,#141414 55%,#0b0b0d);box-shadow:inset 0 1px rgba(255,255,255,.05),0 18px 55px rgba(0,0,0,.25)}
 .norou-os-hero:after{content:"";position:absolute;inset:auto -20% -70% -20%;height:180px;background:radial-gradient(ellipse,rgba(168,85,247,.12),transparent 65%);pointer-events:none}
 
-/* Norou Exercise Coach */
+/* Nova Exercise Coach */
 .exercise-stage{position:relative;height:330px;overflow:hidden;background:linear-gradient(180deg,#111113 0%,#09090b 100%)}
 .exercise-grid{position:absolute;inset:0;opacity:.35;background-image:linear-gradient(rgba(168,85,247,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.12) 1px,transparent 1px);background-size:36px 36px;transform:perspective(450px) rotateX(58deg) scale(1.4);transform-origin:center bottom}
 .exercise-label{position:absolute;top:16px;left:18px;z-index:3;font-size:10px;font-weight:900;letter-spacing:.18em;color:#c99bf7}
@@ -267,7 +267,7 @@ textarea {
 @keyframes lungeRight{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(-5deg) translateY(8px)}}
 @media(prefers-reduced-motion:reduce){.exercise-figure.is-playing *,.exercise-figure.is-playing{animation:none!important}}
 
-/* Norou Exercise Coach Pro */
+/* Nova Exercise Coach Pro */
 .exercise-stage-pro{height:390px;background:radial-gradient(circle at 50% 38%,rgba(168,85,247,.12),transparent 40%),linear-gradient(180deg,#111113,#070708)}
 .coach-3d{position:absolute;left:50%;top:54%;width:310px;height:330px;transform:translate(-50%,-50%);perspective:900px;filter:drop-shadow(0 20px 25px rgba(0,0,0,.55))}
 .coach-perspective{height:100%;transform-style:preserve-3d;transition:transform .5s ease}
@@ -309,7 +309,7 @@ textarea {
 .norou-state-planning .norou-holo-particle{animation-duration:1s}.norou-state-executing .norou-holo-scanline{animation-duration:.55s}.norou-state-success .norou-holo-core-hot{animation-duration:.45s;transform:translate(-50%,-50%) scale(1.5)}
 .norou-state-offline .norou-holo-aura{filter:grayscale(1) blur(10px);opacity:.65}.norou-state-offline .norou-status-dot{background:#aaa;box-shadow:0 0 8px #aaa}
 
-/* NOROU REDESIGN — OS workspace */
+/* NOVA REDESIGN — OS workspace */
 .norou-page-head{display:flex;align-items:center;justify-content:space-between;gap:16px}.norou-page-head h1{font-size:clamp(1.7rem,7vw,2.35rem);font-weight:950;letter-spacing:-.05em;line-height:1.05;margin-top:4px}.norou-page-head p{font-size:12px;color:#737373;margin-top:6px}.norou-eyebrow{font-size:9px;font-weight:900;letter-spacing:.19em;color:#737373}.norou-avatar{width:42px;height:42px;border-radius:14px;border:1px solid rgba(168,85,247,.28);background:linear-gradient(145deg,#2a1738,#111);color:#fff;font-weight:900;box-shadow:0 8px 30px rgba(0,0,0,.28)}
 .norou-command-bar{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid rgba(255,255,255,.09);background:rgba(18,18,22,.88);border-radius:18px;box-shadow:0 14px 40px rgba(0,0,0,.2);cursor:pointer}.norou-command-bar:active{transform:scale(.99)}.norou-command-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:radial-gradient(circle at 35% 30%,#d6f4ff,#8c65ff 32%,#2b123e 72%);box-shadow:0 0 24px rgba(118,177,255,.2);font-size:18px}.norou-command-bar kbd{font-size:9px;color:#777;border:1px solid #2c2c31;border-radius:7px;padding:4px 6px;background:#0d0d0f}
 .norou-ai-card{position:relative;overflow:hidden;min-height:220px;border:1px solid rgba(168,85,247,.18);border-radius:28px;padding:24px 20px;display:flex;align-items:center;justify-content:space-between;background:radial-gradient(circle at 78% 48%,rgba(110,190,255,.13),transparent 20%),radial-gradient(circle at 40% 20%,rgba(168,85,247,.16),transparent 40%),linear-gradient(145deg,#17111f,#09090d 68%);box-shadow:inset 0 1px rgba(255,255,255,.06),0 24px 60px rgba(0,0,0,.3)}.norou-ai-glow{position:absolute;width:260px;height:260px;right:-110px;top:-60px;border-radius:50%;background:rgba(118,177,255,.08);filter:blur(30px)}.norou-ai-copy{position:relative;z-index:2;max-width:58%}.norou-ai-copy h2{font-size:25px;font-weight:950;letter-spacing:-.045em;margin-top:12px}.norou-ai-copy p{font-size:12px;line-height:1.55;color:#85858c;margin-top:7px}.norou-live-pill{display:inline-flex;align-items:center;gap:6px;font-size:8px;font-weight:900;letter-spacing:.16em;color:#a9e7ff}.norou-live-pill i{width:6px;height:6px;border-radius:50%;background:#75d7ff;box-shadow:0 0 12px #75d7ff}.norou-ai-actions{display:flex;gap:8px;margin-top:16px}.norou-ai-actions button,.norou-small-action{border:1px solid rgba(168,85,247,.25);border-radius:11px;background:rgba(255,255,255,.05);color:#eee;padding:8px 11px;font-size:10px;font-weight:800}.norou-ai-actions button:first-child,.norou-small-action{background:linear-gradient(135deg,#9d4edd,#6d4cff);border-color:transparent}.norou-ai-card .norou-holo{transform:scale(.82);margin-right:-10px}
@@ -319,11 +319,11 @@ textarea {
 @media(max-width:430px){.norou-ai-card{min-height:235px;padding:20px 15px}.norou-ai-copy{max-width:62%}.norou-ai-copy h2{font-size:22px}.norou-ai-card .norou-holo{transform:scale(.68);margin-right:-28px}.norou-bento strong{font-size:26px}}
 
 
-/* NOROU MONEY — local 50/30/20 workspace */
+/* NOVA MONEY — local 50/30/20 workspace */
 .norou-money-income{min-width:118px;padding:9px 12px;border:1px solid rgba(168,85,247,.2);border-radius:15px;background:linear-gradient(145deg,#17121d,#0e0e11);text-align:right}.norou-money-income small{display:block;color:#676770;font-size:7px;font-weight:900;letter-spacing:.14em}.norou-money-income strong{display:block;color:#fff;font-size:15px;font-weight:950;margin-top:2px}.norou-money-hero{background:radial-gradient(circle at 88% 50%,rgba(168,85,247,.08),transparent 24%),linear-gradient(145deg,#18131f,#0d0d10);border-color:rgba(168,85,247,.16)}.norou-money-left{font-size:35px;line-height:1;font-weight:950;letter-spacing:-.055em;color:#fff;margin-top:7px}.norou-money-donut{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;box-shadow:0 0 35px rgba(168,85,247,.12)}.norou-money-donut>div{width:62px;height:62px;border-radius:50%;background:#101014;display:flex;flex-direction:column;align-items:center;justify-content:center}.norou-money-donut strong{font-size:10px;color:#fff}.norou-money-donut small{font-size:6px;color:#666;letter-spacing:.14em;margin-top:3px}.norou-money-bucket{min-width:0}.norou-money-bucket>span{font-size:13px;color:#bca6ff}.norou-money-bucket small{display:block;font-size:7px;font-weight:900;letter-spacing:.13em;color:#666;margin-top:9px}.norou-money-bucket strong{display:block;font-size:16px;color:#fff;margin-top:3px}.norou-money-bucket em{display:block;font-size:8px;color:#555;font-style:normal;margin-top:2px}.norou-rule-pill{padding:4px 7px;border-radius:8px;font-size:9px;font-weight:900}.norou-rule-pill.ok{background:rgba(168,85,247,.1);color:#b88cff}.norou-rule-pill.warn{background:rgba(251,191,36,.1);color:#c99bf7}.norou-money-add{padding:8px 12px;border-radius:11px;background:#a855f7;color:#fff;font-size:10px;font-weight:900}.norou-money-cat{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:rgba(255,255,255,.05);font-size:14px}.norou-money-cat.needs{color:#c99bf7}.norou-money-cat.wants{color:#c99bf7}.norou-money-cat.savings{color:#b88cff}
 @media(max-width:430px){.norou-money-income{min-width:104px}.norou-money-left{font-size:30px}.norou-money-donut{width:80px;height:80px}.norou-money-donut>div{width:54px;height:54px}.norou-nav-item small{font-size:7px}.norou-nav-item span{font-size:17px}}
 
-/* NOROU MONEY v14 — finance cockpit polish */
+/* NOVA MONEY v14 — finance cockpit polish */
 .norou-money-month{display:grid;grid-template-columns:36px 1fr 36px auto;align-items:center;gap:8px;background:#111114;border-color:rgba(255,255,255,.07)}
 .norou-money-month>button{height:34px;border-radius:10px;background:rgba(255,255,255,.05);color:#aaa;font-size:20px;display:grid;place-items:center}.norou-money-month>button:active{transform:scale(.95)}
 .norou-money-month>div{text-align:center}.norou-money-month>div strong{display:block;font-size:13px;color:#fff;margin-top:3px}.norou-money-today{padding:0 10px!important;font-size:9px!important;font-weight:900!important;color:#c4a7ff!important;border:1px solid rgba(168,85,247,.16)}
@@ -331,3 +331,133 @@ textarea {
 .norou-money-edit{padding:6px 9px;border:1px solid rgba(168,85,247,.2);border-radius:9px;color:#c4a7ff;font-size:9px;font-weight:900;background:rgba(168,85,247,.07)}
 .norou-money-search{display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);border-radius:12px;padding:9px 11px}.norou-money-search span{color:#666;font-size:15px}.norou-money-search input{width:100%;background:transparent;outline:none;color:#fff;font-size:11px}.norou-money-search input::placeholder{color:#555}.norou-money-filter{flex:0 0 auto;padding:7px 10px;border-radius:9px;background:rgba(255,255,255,.04);color:#666;font-size:9px;font-weight:900}.norou-money-filter.active{background:rgba(168,85,247,.13);color:#c9b5ff;border:1px solid rgba(168,85,247,.16)}.norou-money-note{background:linear-gradient(145deg,#131116,#101012);border-color:rgba(168,85,247,.1)}
 @media(max-width:430px){.norou-money-month{grid-template-columns:32px 1fr 32px auto}.norou-money-today{padding:0 7px!important}.norou-money-insight-grid{gap:6px}.norou-money-insight-grid .p-4{padding:11px}.norou-money-insight-grid strong{font-size:15px}}
+
+/* NOVA V16 — unified Plan / Wellness / Fuel / Hub workspace */
+.norou-fuel-hero,.norou-wellness-hero,.norou-plan-hero,.norou-hub-hero{background:radial-gradient(circle at 88% 20%,rgba(168,85,247,.11),transparent 25%),linear-gradient(145deg,#18131f,#0d0d10);border-color:rgba(168,85,247,.15);box-shadow:inset 0 1px rgba(255,255,255,.035),0 24px 55px rgba(0,0,0,.22)}
+.norou-fuel-cal{margin-top:7px}.norou-fuel-cal strong{font-size:36px;line-height:1;font-weight:950;letter-spacing:-.06em;color:#fff}.norou-fuel-cal span{font-size:13px;font-weight:700;color:#555}
+.norou-fuel-ring{width:82px;height:82px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,#101014 55%,transparent 57%),conic-gradient(#a855f7 0 42%,rgba(255,255,255,.07) 42% 100%);box-shadow:0 0 32px rgba(168,85,247,.12)}.norou-fuel-ring strong{font-size:17px;color:#fff}.norou-fuel-ring small{font-size:6px;font-weight:900;letter-spacing:.15em;color:#666;margin-top:2px}
+.norou-fuel-grid,.norou-wellness-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.norou-fuel-grid .rounded-2xl,.norou-wellness-grid .rounded-2xl{background:linear-gradient(145deg,#151518,#101012);border-color:rgba(255,255,255,.06)}.norou-fuel-kicker,.norou-wellness-kicker{font-size:7px;font-weight:900;letter-spacing:.14em;color:#666}.norou-fuel-grid strong,.norou-wellness-grid strong{display:block;color:#fff;font-size:21px;letter-spacing:-.04em;margin-top:7px}.norou-fuel-grid small,.norou-wellness-grid small{font-size:8px;color:#555}.norou-fuel-entry{background:linear-gradient(145deg,#151518,#101012);border-color:rgba(255,255,255,.06)}.norou-fuel-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#a855f712;color:#c5a7ff;font-size:18px}.norou-wellness-number{font-size:42px;line-height:1;font-weight:950;letter-spacing:-.06em;color:#fff}.norou-wellness-orbit,.norou-plan-orb,.norou-hub-orbit{width:76px;height:76px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(168,85,247,.22);background:radial-gradient(circle,#6d4cff22,#15111c 65%);color:#c8aaff;font-size:25px;box-shadow:0 0 34px rgba(168,85,247,.11)}.norou-wellness-coach{background:linear-gradient(145deg,#17131d,#101012);border-color:rgba(168,85,247,.13)}.norou-wellness-coach-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:#a855f715;color:#c7a9ff;font-size:18px}.norou-wellness-mini{font-size:8px;color:#555;margin-top:8px}.norou-wellness-link{font-size:8px;color:#b998ff;font-weight:900;margin-top:8px}.norou-plan-number{font-size:42px;line-height:1;font-weight:950;letter-spacing:-.06em;color:#fff}.norou-plan-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.norou-plan-days button{min-width:0;padding:9px 3px;border-radius:12px;background:#121214;border:1px solid rgba(255,255,255,.05);color:#666;font-size:9px;font-weight:900}.norou-plan-days button.active{background:#a855f7;border-color:#a855f7;color:#fff;box-shadow:0 8px 24px rgba(168,85,247,.16)}.norou-plan-days small{display:block;font-size:6px;margin-top:3px;opacity:.7}.norou-hub-mark{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:#a855f712;border:1px solid #a855f725;color:#c6a8ff;font-size:20px}.norou-hub-hero strong{display:block;font-size:28px;letter-spacing:-.05em;color:#fff}.norou-hub-hero p{max-width:300px;font-size:11px;line-height:1.55;color:#666;margin-top:5px}.norou-hub-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.norou-hub-item{display:flex;align-items:center;gap:10px;min-width:0;text-align:left;padding:13px;border:1px solid rgba(255,255,255,.06);border-radius:17px;background:linear-gradient(145deg,#151518,#101012);transition:transform .2s,border-color .2s}.norou-hub-item:hover{border-color:rgba(168,85,247,.18)}.norou-hub-item:active{transform:scale(.985)}.norou-hub-item.featured{background:linear-gradient(145deg,#19131f,#101012);border-color:rgba(168,85,247,.13)}.norou-hub-icon{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border-radius:11px;background:#a855f711;color:#bfa0ff;font-size:16px}.norou-hub-item strong{display:block;color:#eee;font-size:10px}.norou-hub-item small{display:block;color:#5f5f66;font-size:8px;line-height:1.35;margin-top:3px}.norou-hub-item i{font-style:normal;color:#444;font-size:18px}.norou-hub-back{width:38px;height:38px;border-radius:12px;background:#ffffff08;color:#fff;font-size:22px}.norou-hub-footer{background:linear-gradient(145deg,#141116,#101012);border-color:rgba(168,85,247,.1)}
+@media(max-width:430px){.norou-fuel-grid,.norou-wellness-grid{gap:6px}.norou-fuel-grid .p-4,.norou-wellness-grid .p-4{padding:11px}.norou-fuel-grid strong,.norou-wellness-grid strong{font-size:17px}.norou-fuel-ring{width:72px;height:72px}.norou-wellness-number,.norou-plan-number{font-size:36px}.norou-hub-grid{gap:6px}.norou-hub-item{padding:11px 9px}.norou-hub-item small{font-size:7px}}
+
+/* Exercise Coach v18 — reference-style detail experience */
+.exercise-reference-stage{position:relative;height:420px;overflow:hidden;background:#f7f7f8;border-bottom:1px solid #1a1a1d}
+.exercise-reference-status{position:absolute;left:18px;top:15px;z-index:6;color:#666;font-size:9px;font-weight:900;letter-spacing:.16em}
+.exercise-reference-pause{position:absolute;right:18px;top:15px;z-index:8;width:42px;height:42px;border-radius:999px;border:0;background:#b8bbc1;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 20px #0002}
+.exercise-reference-views{position:absolute;right:16px;bottom:15px;z-index:8;display:flex;gap:4px;padding:4px;border-radius:12px;background:#fff;border:1px solid #ddd;box-shadow:0 5px 20px #0001}.exercise-reference-views button{padding:6px 9px;border-radius:8px;color:#777;font-size:9px;font-weight:900;text-transform:uppercase}.exercise-reference-views button.active{background:#18181b;color:#fff}
+.exercise-reference-stage .coach-3d{top:52%;width:360px;height:360px;filter:drop-shadow(0 16px 18px #0002)}
+.exercise-reference-stage .coach-perspective{filter:none}.exercise-reference-stage .coach-human .head,.exercise-reference-stage .coach-human .neck,.exercise-reference-stage .coach-human .torso,.exercise-reference-stage .coach-human .arm,.exercise-reference-stage .coach-human .leg,.exercise-reference-stage .coach-human .foot{stroke:#666;stroke-width:1}.exercise-reference-stage .coach-equipment{stroke:#777;fill:#aaa;opacity:1}.exercise-reference-stage .coach-equipment .bar{fill:#333;stroke:#777}.exercise-reference-stage .coach-shadow{fill:#0002}.exercise-reference-stage .movement-chip{background:#fff;color:#333;border-color:#ddd;box-shadow:0 5px 18px #0001}.exercise-reference-stage .movement-chip strong{color:#8b3edb}.exercise-reference-stage .coach-arrows{stroke:#8b3edb}.exercise-reference-stage .muscle{fill:#d6b4f3;stroke:#a66bda}.exercise-reference-stage .muscle.target-active{fill:#a855f7;filter:drop-shadow(0 0 7px #a855f766)}
+.exercise-reference-info{padding:22px 18px 18px;background:#050507}.exercise-tabs{display:flex;gap:22px;margin:18px -18px 0;padding:0 18px;border-bottom:1px solid #222}.exercise-tabs button{padding:0 0 11px;color:#666;font-size:13px;font-weight:800;border-bottom:2px solid transparent}.exercise-tabs button.active{color:#fff;border-color:#a855f7}.exercise-section-label{font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#b58ad5;margin-bottom:10px}.exercise-target-panel,.exercise-form-panel,.exercise-howto-panel{margin-top:16px;padding:14px;border-radius:16px;background:#111114;border:1px solid #202025}.target-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.target-row{display:flex;gap:9px;align-items:flex-start;padding:9px;border-radius:12px;background:#17171b}.target-dot{width:9px;height:9px;flex:0 0 9px;margin-top:4px;border-radius:50%;background:#a855f7;box-shadow:0 0 10px #a855f766}.target-dot.secondary{background:#8b7bd8}.target-dot.stabilizer{background:#c9c1df}.target-row b{display:block;color:#eee;font-size:11px}.target-row small{display:block;margin-top:2px;color:#666;font-size:9px;text-transform:capitalize}.form-check{display:flex;gap:8px;padding:7px 0;color:#c7c7ca;font-size:11px;line-height:1.45}.form-check:first-letter{color:#b55af2}.howto-step{display:flex;gap:10px;padding:10px;border-radius:12px;color:#aaa;cursor:pointer}.howto-step.current{background:#1a1022;color:#fff}.howto-step span{display:grid;place-items:center;width:24px;height:24px;flex:0 0 24px;border-radius:8px;background:#222;color:#c99bf7;font-size:10px;font-weight:900}.howto-step.current span{background:#a855f7;color:#fff}.howto-step p{font-size:11px;line-height:1.5}.exercise-control-row{display:flex;align-items:center;gap:7px;margin-top:12px;overflow:auto}.exercise-control-row button{white-space:nowrap;padding:8px 10px;border-radius:10px;border:1px solid #29292e;background:#111114;color:#aaa;font-size:10px;font-weight:900}.exercise-control-row button.active{background:#28163a;border-color:#8b3edb;color:#e2c8f7}.exercise-control-row span{margin-left:auto;color:#666;font-size:9px;font-weight:900;white-space:nowrap}.exercise-control-row span b{font-size:14px;color:#fff;margin-left:4px}.exercise-safety-note{margin-top:12px;color:#666;font-size:9px;line-height:1.5}.exercise-library-strip{padding:18px 2px}.exercise-library-row{display:flex;gap:8px;overflow:auto;padding:10px 0 2px}.exercise-library-row button{min-width:145px;text-align:left;padding:11px 12px;border-radius:14px;border:1px solid #222;background:#101013}.exercise-library-row button.active{border-color:#8b3edb;background:#1b1024}.exercise-library-row span{display:block;color:#ddd;font-size:10px;font-weight:900}.exercise-library-row small{display:block;color:#666;margin-top:3px;font-size:9px}
+@media(max-width:480px){.exercise-reference-stage{height:350px}.exercise-reference-stage .coach-3d{transform:translate(-50%,-50%) scale(.84)}.target-list{grid-template-columns:1fr}.exercise-reference-info{padding:18px 14px}.exercise-tabs{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}}
+@media(prefers-reduced-motion:reduce){.exercise-reference-stage .coach-3d *,.exercise-reference-stage .coach-3d{animation:none!important}}
+
+
+/* Mobile interaction hardening — especially for iOS keyboards/touch. */
+button, a, [role="button"] { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.norou-touch-target { min-height: 44px; }
+.norou-command-input { -webkit-text-fill-color: #fff; color: #fff !important; opacity: 1; }
+.norou-command-input::placeholder { color: #73737d; opacity: 1; }
+.norou-command-input:focus { box-shadow: 0 0 0 3px rgba(168,85,247,.10), 0 0 24px rgba(168,85,247,.08); }
+.norou-command-scroll { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; scroll-padding-bottom: 160px; }
+.norou-input-card { position: relative; z-index: 3; }
+@media (max-width: 640px) {
+  .norou-command-scroll button { min-height: 44px; }
+  .norou-command-scroll textarea { min-height: 112px; }
+}
+
+
+/* NOVA v21 — accessibility, touch and motion hardening */
+button, a, [role="button"], select { min-height: 44px; }
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid #c084fc; outline-offset: 2px; }
+.norou-command-scroll { scrollbar-width: thin; }
+.norou-command-scroll::-webkit-scrollbar { width: 4px; }
+.norou-command-scroll::-webkit-scrollbar-thumb { background: rgba(168,85,247,.28); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+}
+@media (max-width: 420px) {
+  .norou-command-hero { padding: 10px 12px; }
+  .norou-command-scroll { padding-left: 12px !important; padding-right: 12px !important; }
+  .norou-command-scroll .grid.grid-cols-5 { grid-template-columns: repeat(5,minmax(58px,1fr)); overflow-x: auto; }
+  .norou-command-scroll .grid.grid-cols-5 > button { min-width: 58px; }
+}
+
+/* Nova Money — income pair */
+.norou-money-income-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0}
+.norou-money-income-row .norou-money-income{min-width:0}
+.norou-money-income-unexpected{position:relative}
+.norou-money-income-unexpected span{display:block;margin-top:2px;font-size:9px;font-weight:800;color:#a855f7}
+@media(max-width:520px){.norou-money-income-row{gap:6px}.norou-money-income-row .norou-money-income{padding:10px 9px}.norou-money-income-row .norou-money-income small{font-size:7px}.norou-money-income-row .norou-money-income strong{font-size:13px}}
+
+
+/* NOVA FINAL PRODUCT PASS */
+:root {
+  --nova-purple: #a855f7;
+  --nova-purple-2: #c084fc;
+  --nova-surface: #111116;
+  --nova-surface-2: #1a1a20;
+  --nova-border: rgba(255,255,255,.08);
+}
+
+button, [role="button"], a, select, input[type="checkbox"], input[type="radio"], input[type="range"] {
+  touch-action: manipulation;
+}
+
+button:focus-visible, [role="button"]:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid rgba(192,132,252,.9);
+  outline-offset: 2px;
+}
+
+button, [role="button"] { -webkit-tap-highlight-color: transparent; }
+
+.nova-startup-mark {
+  width: 68px; height: 68px; margin: 0 auto 14px; display:grid; place-items:center;
+  border-radius: 22px; color:#fff; font-size:34px; font-weight:950;
+  background: radial-gradient(circle at 35% 30%, #e9d5ff 0 4%, #a855f7 22%, #2a123d 58%, #08060b 78%);
+  border:1px solid rgba(192,132,252,.45);
+  box-shadow: 0 0 35px rgba(168,85,247,.28), inset 0 0 24px rgba(255,255,255,.08);
+}
+
+.nova-network-pill {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom) + 76px); z-index: 38;
+  padding: 6px 10px; border-radius:999px; font-size:9px; font-weight:900;
+  letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.55);
+  background:rgba(12,12,16,.78); border:1px solid rgba(255,255,255,.06); backdrop-filter:blur(12px);
+  pointer-events:none;
+}
+
+.norou-bottom-nav { padding-top: 7px; background: linear-gradient(180deg, rgba(5,5,8,.86), rgba(5,5,8,.98)); border-top:1px solid rgba(255,255,255,.07); backdrop-filter:blur(20px); }
+.norou-nav-item { min-width:48px; min-height:52px; padding:6px 5px 5px; border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; color:rgba(255,255,255,.42); transition:all .18s ease; position:relative; }
+.norou-nav-item span { font-size:19px; line-height:1; }
+.norou-nav-item small { font-size:9px; font-weight:850; letter-spacing:.01em; }
+.norou-nav-item.active { color:#fff; background:rgba(168,85,247,.11); }
+.norou-nav-item.active:before { content:""; position:absolute; top:-7px; width:24px; height:2px; border-radius:999px; background:#a855f7; box-shadow:0 0 12px rgba(168,85,247,.8); }
+
+.norou-hub-search { display:flex; align-items:center; gap:9px; min-height:46px; padding:0 13px; border-radius:16px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); }
+.norou-hub-search span { color:#a855f7; font-size:18px; }
+.norou-hub-search input { flex:1; min-width:0; background:transparent; border:0; outline:0; color:#fff; font-size:16px; }
+.norou-hub-search input::placeholder { color:#666; }
+
+.norou-mode-rail { display:flex; gap:8px; overflow-x:auto; padding:1px 1px 4px; scroll-snap-type:x proximity; scrollbar-width:none; }
+.norou-mode-rail::-webkit-scrollbar { display:none; }
+.norou-mode-button { flex:0 0 92px; min-height:76px; scroll-snap-align:start; }
+
+.norou-command-input { font-size:16px !important; line-height:1.5; }
+.norou-touch-target { min-width:44px; min-height:44px; touch-action:manipulation; }
+
+.card, [class*="rounded-2xl"] { -webkit-backface-visibility:hidden; }
+
+@media (max-width: 380px) {
+  .norou-page-head h1 { font-size: 25px; }
+  .norou-ai-actions { flex-wrap:wrap; }
+  .norou-ai-actions button { flex:1; min-width:120px; }
+  .norou-bento-grid { grid-template-columns:1fr 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+}
+
+@media (pointer: coarse) {
+  button, [role="button"], select { min-height:44px; }
+}

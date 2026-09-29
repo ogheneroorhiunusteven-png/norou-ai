@@ -1,4 +1,4 @@
-package com.norouai.app;
+package com.yourname.levelup;
 
 import com.getcapacitor.BridgeActivity;
 

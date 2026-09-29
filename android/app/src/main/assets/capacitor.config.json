@@ -1,0 +1,19 @@
+{
+	"appId": "com.norouai.app",
+	"appName": "Nova AI",
+	"webDir": "out",
+	"ios": {
+		"backgroundColor": "#000000",
+		"contentInset": "always"
+	},
+	"plugins": {
+		"LocalNotifications": {
+			"smallIcon": "ic_stat_icon_config_sample",
+			"iconColor": "#8b5cf6"
+		},
+		"Keyboard": {
+			"resize": "none",
+			"resizeOnFullScreen": false
+		}
+	}
+}

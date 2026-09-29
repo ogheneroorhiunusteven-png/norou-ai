@@ -3,234 +3,40 @@
 import { useState } from "react";
 import { useStore } from "@/lib/store";
 import { isHealthAvailable, requestHealthPermission, getTodayStats } from "@/lib/health-native";
-import { Card, ProgressBar, Modal, Field, inputClass, Button, SectionTitle } from "../ui";
+import { Card, ProgressBar, Modal, Field, inputClass, Button } from "../ui";
 import type { MoodValue } from "@/lib/types";
 import { ExerciseCoach } from "../ExerciseCoach";
 
-const MOODS: { value: MoodValue; emoji: string; label: string }[] = [
-  { value: 0, emoji: "😫", label: "Rough" },
-  { value: 1, emoji: "😕", label: "Meh" },
-  { value: 2, emoji: "😐", label: "OK" },
-  { value: 3, emoji: "🙂", label: "Good" },
-  { value: 4, emoji: "😁", label: "Great" },
-];
+const MOODS: { value: MoodValue; emoji: string; label: string }[] = [{ value: 0, emoji: "😫", label: "Rough" }, { value: 1, emoji: "😕", label: "Meh" }, { value: 2, emoji: "😐", label: "OK" }, { value: 3, emoji: "🙂", label: "Good" }, { value: 4, emoji: "😁", label: "Great" }];
 
 export function Health() {
   const { state, getHealthDay, setWater, setCaloriesBurned, setSteps, setMood, setRestingHeartRate } = useStore();
-  const hd = getHealthDay();
-  const goals = state.healthGoals;
+  const hd = getHealthDay(); const goals = state.healthGoals;
+  const [editing, setEditing] = useState<null | "hr" | "water" | "cal">(null); const [val, setVal] = useState(""); const [syncing, setSyncing] = useState(false); const [exerciseCoach, setExerciseCoach] = useState(false); const [syncMsg, setSyncMsg] = useState<string | null>(null);
+  const waterPct = goals.waterGoal ? Math.min(100, hd.water / goals.waterGoal * 100) : 0; const stepsPct = Math.min(100, hd.steps / 10000 * 100); const calPct = goals.caloriesGoal ? Math.min(100, hd.caloriesBurned / goals.caloriesGoal * 100) : 0;
 
-  const [editing, setEditing] = useState<null | "hr" | "water" | "cal">(null);
-  const [val, setVal] = useState("");
-  const [syncing, setSyncing] = useState(false);
-  const [exerciseCoach, setExerciseCoach] = useState(false);
-  const [syncMsg, setSyncMsg] = useState<string | null>(null);
+  const syncFromHealth = async () => { setSyncing(true); setSyncMsg(null); try { if (!(await isHealthAvailable())) return setSyncMsg("Health data isn't available on this device."); await requestHealthPermission(); const stats = await getTodayStats(); if (!stats) return setSyncMsg("Couldn't read health data — check permissions in Settings."); setSteps(stats.steps); setCaloriesBurned(stats.activeCalories); setSyncMsg(`Synced: ${stats.steps} steps, ${stats.activeCalories} kcal`); } finally { setSyncing(false); } };
+  const openEdit = (type: "hr" | "water" | "cal") => { setEditing(type); setVal(type === "hr" ? String(goals.restingHeartRate) : type === "water" ? String(hd.water) : String(hd.caloriesBurned)); };
+  const save = () => { const n = parseInt(val, 10); if (!Number.isNaN(n)) { if (editing === "hr") setRestingHeartRate(n); if (editing === "water") setWater(n); if (editing === "cal") setCaloriesBurned(n); } setEditing(null); };
 
-  const syncFromHealth = async () => {
-    setSyncing(true);
-    setSyncMsg(null);
-    try {
-      const available = await isHealthAvailable();
-      if (!available) {
-        setSyncMsg("Health data isn't available on this device.");
-        return;
-      }
-      await requestHealthPermission();
-      const stats = await getTodayStats();
-      if (!stats) {
-        setSyncMsg("Couldn't read health data — check permissions in Settings.");
-        return;
-      }
-      setSteps(stats.steps);
-      setCaloriesBurned(stats.activeCalories);
-      setSyncMsg(`Synced: ${stats.steps} steps, ${stats.activeCalories} kcal`);
-    } finally {
-      setSyncing(false);
-    }
-  };
+  return <div className="space-y-4 pb-4">
+    <header className="norou-page-head pt-1"><div><div className="norou-eyebrow">NOVA WELLNESS</div><h1>Wellness</h1><p>Your daily health signals, movement and recovery tools.</p></div><button className="norou-money-add" onClick={() => setExerciseCoach(true)}>Exercise →</button></header>
 
-  const openEdit = (type: "hr" | "water" | "cal") => {
-    setEditing(type);
-    setVal(type === "hr" ? String(goals.restingHeartRate) : type === "water" ? String(hd.water) : String(hd.caloriesBurned));
-  };
+    <Card className="norou-wellness-hero p-5"><div className="norou-eyebrow">TODAY&apos;S MOMENTUM</div><div className="flex items-end justify-between gap-4 mt-2"><div><strong className="norou-wellness-number">{hd.steps.toLocaleString()}</strong><div className="text-xs text-neutral-500 mt-1">steps logged today</div></div><div className="norou-wellness-orbit"><span>⌁</span></div></div><div className="mt-5 h-2 rounded-full bg-white/7 overflow-hidden"><div className="h-full rounded-full bg-[#a855f7]" style={{ width: `${stepsPct}%` }} /></div><div className="mt-2 flex justify-between text-[9px] font-bold text-neutral-600"><span>{Math.round(stepsPct)}% of movement goal</span><span>10,000 steps</span></div></Card>
 
-  const save = () => {
-    const n = parseInt(val, 10);
-    if (!Number.isNaN(n)) {
-      if (editing === "hr") setRestingHeartRate(n);
-      if (editing === "water") setWater(n);
-      if (editing === "cal") setCaloriesBurned(n);
-    }
-    setEditing(null);
-  };
+    <section className="norou-wellness-grid">
+      <Card className="p-4"><span className="norou-wellness-kicker">WATER</span><strong>{hd.water}</strong><small>/ {goals.waterGoal} cups</small><div className="mt-3 h-1.5 rounded-full bg-white/7 overflow-hidden"><div className="h-full rounded-full bg-[#a855f7]" style={{ width: `${waterPct}%` }} /></div><button onClick={() => openEdit("water")} className="norou-wellness-link">Update</button></Card>
+      <Card className="p-4"><span className="norou-wellness-kicker">RESTING HR</span><strong>{goals.restingHeartRate}</strong><small>BPM</small><div className="norou-wellness-mini">Daily signal</div><button onClick={() => openEdit("hr")} className="norou-wellness-link">Update</button></Card>
+      <Card className="p-4"><span className="norou-wellness-kicker">ACTIVE</span><strong>{hd.caloriesBurned}</strong><small>kcal</small><div className="mt-3 h-1.5 rounded-full bg-white/7 overflow-hidden"><div className="h-full rounded-full bg-[#c99bf7]" style={{ width: `${calPct}%` }} /></div><button onClick={() => openEdit("cal")} className="norou-wellness-link">Update</button></Card>
+    </section>
 
-  return (
-    <div className="space-y-4">
-      <header className="pt-1">
-        <h1 className="text-2xl font-black text-white">Health</h1>
-        <p className="text-sm text-neutral-400">Your wellness at a glance</p>
-      </header>
+    <Card className="norou-wellness-coach p-4"><div className="flex items-center gap-3"><div className="norou-wellness-coach-icon">✦</div><div className="flex-1"><div className="font-black text-white">Exercise Coach</div><div className="text-[10px] text-neutral-500 mt-1">Guided movement demos, phases and form cues.</div></div><button onClick={() => setExerciseCoach(true)} className="norou-small-action">Open</button></div></Card>
+    <button onClick={syncFromHealth} disabled={syncing} className="w-full rounded-2xl border border-[#a855f7]/20 bg-[#a855f7]/7 px-4 py-3 text-xs font-bold text-[#c99bf7] disabled:opacity-50">{syncing ? "Syncing device health…" : "↻ Sync from device Health"}</button>
+    {syncMsg && <p className="text-[10px] text-center text-neutral-500">{syncMsg}</p>}
 
-      <button onClick={() => setExerciseCoach(true)} className="w-full rounded-2xl border border-[#a855f7]/30 bg-[#a855f7]/10 px-4 py-4 text-left transition active:scale-[.99]">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#a855f7]/15 text-2xl">🏋️</div>
-          <div className="flex-1"><div className="font-black text-white">Exercise Coach</div><div className="text-xs text-neutral-400">Animated demos + step-by-step form guidance</div></div>
-          <span className="text-[#c99bf7]">›</span>
-        </div>
-      </button>
+    <Card className="p-4"><div className="norou-eyebrow">CHECK-IN</div><div className="flex items-center justify-between gap-3 mt-2"><div><div className="font-black text-white">How are you feeling?</div><div className="text-[10px] text-neutral-600 mt-1">A simple daily check-in for your own record.</div></div></div><div className="flex gap-1.5 mt-4">{MOODS.map((m) => <button key={m.value} onClick={() => setMood(m.value)} className={`flex-1 rounded-xl py-3 border transition ${hd.mood === m.value ? "border-[#a855f7] bg-[#a855f7]/12" : "border-white/5 bg-white/[.025]"}`}><span className="text-xl">{m.emoji}</span><span className="block text-[8px] font-bold text-neutral-500 mt-1">{m.label}</span></button>)}</div></Card>
 
-      {exerciseCoach && <div className="fixed inset-0 z-[80] overflow-y-auto bg-black/95 px-4 pt-5 pb-10 backdrop-blur-md"><div className="mx-auto max-w-2xl"><ExerciseCoach onClose={() => setExerciseCoach(false)} /></div></div>}
-
-      {/* Heart rate */}
-      <Card className="p-5">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="text-4xl font-black text-white">
-              ❤️ {goals.restingHeartRate}
-              <span className="text-lg text-neutral-500 font-semibold"> BPM</span>
-            </div>
-            <p className="mt-1 text-xs text-neutral-400">Resting HR</p>
-          </div>
-          <EditBtn onClick={() => openEdit("hr")} />
-        </div>
-      </Card>
-
-      {/* Water */}
-      <Card className="p-5">
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <div className="text-3xl font-black text-white">
-              💧 {hd.water}
-              <span className="text-lg text-neutral-500 font-semibold"> cups</span>
-            </div>
-            <p className="mt-1 text-xs text-neutral-400">{goals.waterGoal} cups goal</p>
-          </div>
-          <EditBtn onClick={() => openEdit("water")} />
-        </div>
-        <ProgressBar value={(hd.water / goals.waterGoal) * 100} />
-        {/* tappable circles */}
-        <div className="mt-4">
-          <div className="mb-2 text-xs font-semibold text-neutral-400">
-            {hd.water}/{goals.waterGoal} cups
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {Array.from({ length: goals.waterGoal }).map((_, i) => {
-              const filled = i < hd.water;
-              return (
-                <button
-                  key={i}
-                  onClick={() => setWater(filled && i + 1 === hd.water ? i : i + 1)}
-                  className={`h-9 w-9 rounded-full border-2 flex items-center justify-center text-lg transition-all active:scale-90 ${
-                    filled ? "bg-[#a855f7]/20 border-[#a855f7] text-[#c99bf7]" : "border-white/15 text-neutral-600"
-                  }`}
-                  aria-label={`Set water to ${i + 1}`}
-                >
-                  {filled ? "●" : "○"}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </Card>
-
-      {/* Steps */}
-      <Card className="p-5">
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <div className="text-3xl font-black text-white">
-              👣 {hd.steps.toLocaleString()}
-            </div>
-            <p className="mt-1 text-xs text-neutral-400">10,000 steps goal</p>
-          </div>
-        </div>
-        <ProgressBar value={(hd.steps / 10000) * 100} />
-      </Card>
-
-      {/* Sync from device Health app */}
-      <button
-        onClick={syncFromHealth}
-        disabled={syncing}
-        className="w-full rounded-xl border border-[#a855f7]/30 bg-[#a855f7]/10 px-4 py-3 text-sm font-semibold text-[#c99bf7] active:scale-95 transition-all disabled:opacity-50"
-      >
-        {syncing ? "Syncing…" : "🔄 Sync steps & calories from Health"}
-      </button>
-      {syncMsg && <p className="text-xs text-center text-neutral-400 -mt-2">{syncMsg}</p>}
-
-      {/* Calories burned */}
-      <Card className="p-5">
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <div className="text-3xl font-black text-white">
-              🔥 {hd.caloriesBurned}
-              <span className="text-lg text-neutral-500 font-semibold"> kcal</span>
-            </div>
-            <p className="mt-1 text-xs text-neutral-400">{goals.caloriesGoal} kcal goal</p>
-          </div>
-          <EditBtn onClick={() => openEdit("cal")} />
-        </div>
-        <ProgressBar value={(hd.caloriesBurned / goals.caloriesGoal) * 100} />
-      </Card>
-
-      {/* Mood */}
-      <Card className="p-5">
-        <SectionTitle>Today&apos;s Mood</SectionTitle>
-        <div className="flex justify-between gap-1.5">
-          {MOODS.map((m) => {
-            const selected = hd.mood === m.value;
-            return (
-              <button
-                key={m.value}
-                onClick={() => setMood(m.value)}
-                className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-3 transition-all active:scale-95 ${
-                  selected ? "bg-[#a855f7]/20 border border-[#a855f7]" : "bg-white/5 border border-transparent"
-                }`}
-              >
-                <span className="text-2xl">{m.emoji}</span>
-                <span className={`text-[10px] font-semibold ${selected ? "text-[#c99bf7]" : "text-neutral-400"}`}>
-                  {m.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </Card>
-
-      <Modal
-        open={editing !== null}
-        onClose={() => setEditing(null)}
-        title={editing === "hr" ? "Resting Heart Rate" : editing === "water" ? "Water (cups)" : "Calories Burned"}
-      >
-        <Field label="Value">
-          <input
-            type="number"
-            className={inputClass}
-            value={val}
-            onChange={(e) => setVal(e.target.value)}
-            autoFocus
-            inputMode="numeric"
-          />
-        </Field>
-        <div className="flex gap-2 mt-2">
-          <Button variant="ghost" className="flex-1" onClick={() => setEditing(null)}>
-            Cancel
-          </Button>
-          <Button className="flex-1" onClick={save}>
-            Save
-          </Button>
-        </div>
-      </Modal>
-    </div>
-  );
-}
-
-function EditBtn({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="h-9 w-9 rounded-xl bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white flex items-center justify-center"
-      aria-label="Edit"
-    >
-      ✏️
-    </button>
-  );
+    {exerciseCoach && <div className="fixed inset-0 z-[80] overflow-y-auto bg-black/95 px-4 pt-5 pb-10 backdrop-blur-md"><div className="mx-auto max-w-2xl"><ExerciseCoach onClose={() => setExerciseCoach(false)} /></div></div>}
+    <Modal open={editing !== null} onClose={() => setEditing(null)} title={editing === "hr" ? "Resting heart rate" : editing === "water" ? "Water (cups)" : "Active calories"}><Field label="Value"><input type="number" className={inputClass} value={val} onChange={(e) => setVal(e.target.value)} autoFocus /></Field><div className="flex gap-2 mt-2"><Button variant="ghost" className="flex-1" onClick={() => setEditing(null)}>Cancel</Button><Button className="flex-1" onClick={save}>Save</Button></div></Modal>
+  </div>;
 }

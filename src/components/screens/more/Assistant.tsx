@@ -14,6 +14,9 @@ export function Assistant() {
   const [error, setError] = useState<string | null>(null);
   const [voice, setVoice] = useState(false);
   const [speaking, setSpeaking] = useState(false);
+  const [voiceChat, setVoiceChat] = useState(false);
+  const recognitionRef = useRef<any>(null);
+  const voiceTranscriptRef = useRef("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,19 +28,40 @@ export function Assistant() {
   }, [messages]);
 
 
-  useEffect(() => {
-    if (!voice) return;
+  useEffect(() => () => {
+    try { recognitionRef.current?.abort?.(); } catch {}
+    recognitionRef.current = null;
+    if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
+  }, []);
+
+  const startVoice = () => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) { setVoice(false); setError("Voice input is not supported here."); return; }
+    if (!SR) { setError("Voice input is not available in this app build. You can still type normally."); return; }
+    try { recognitionRef.current?.abort?.(); } catch {}
     const recognition = new SR();
+    recognitionRef.current = recognition;
     recognition.lang = "en-GB";
-    recognition.interimResults = false;
-    recognition.onresult = (event: any) => setInput(event.results?.[0]?.[0]?.transcript ?? "");
-    recognition.onerror = () => setVoice(false);
-    recognition.onend = () => setVoice(false);
-    recognition.start();
-    return () => { try { recognition.stop(); } catch {} };
-  }, [voice]);
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+    recognition.onstart = () => { voiceTranscriptRef.current = ""; setVoice(true); };
+    recognition.onresult = (event: any) => {
+      const transcript = Array.from(event.results ?? []).map((r: any) => r?.[0]?.transcript ?? "").join(" ").trim();
+      if (transcript) { voiceTranscriptRef.current = transcript; setInput(transcript); }
+    };
+    recognition.onerror = (event: any) => {
+      setVoice(false);
+      recognitionRef.current = null;
+      if (event?.error !== "aborted" && event?.error !== "no-speech") setError(`Voice input error: ${event.error ?? "unknown"}`);
+    };
+    recognition.onend = () => {
+      setVoice(false);
+      recognitionRef.current = null;
+      const spoken = voiceTranscriptRef.current.trim();
+      if (voiceChat && spoken) setTimeout(() => { void send(spoken); }, 60);
+    };
+    try { recognition.start(); } catch { setVoice(false); recognitionRef.current = null; setError("Nova could not start the microphone. Try again."); }
+  };
 
   const speak = (text: string) => {
     if (!("speechSynthesis" in window)) return;
@@ -48,8 +72,8 @@ export function Assistant() {
     window.speechSynthesis.speak(u);
   };
 
-  const send = async () => {
-    const text = input.trim();
+  const send = async (spokenText?: string) => {
+    const text = (spokenText ?? input).trim();
     if (!text || sending) return;
     setError(null);
     const next = [...messages, { role: "user" as const, content: text }];
@@ -59,6 +83,7 @@ export function Assistant() {
     try {
       const reply = await sendChatMessage(next, state);
       setMessages([...next, { role: "assistant", content: reply.text }]);
+      if (voiceChat) speak(reply.text);
       if (speaking) window.speechSynthesis.cancel();
       for (const fact of reply.newMemories) addMemory(fact, "ai");
     } catch (err) {
@@ -94,7 +119,7 @@ export function Assistant() {
             </div>
           </div>
         ))}
-        {sending && <div className="text-xs text-neutral-500 px-2">Norou is thinking…</div>}
+        {sending && <div className="text-xs text-neutral-500 px-2">Nova is thinking…</div>}
         {error && <div className="text-xs text-red-400 px-2">{error}</div>}
         <div ref={scrollRef} />
       </div>
@@ -107,7 +132,7 @@ export function Assistant() {
           onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), send())}
           disabled={sending}
         />
-        <button onClick={() => setVoice(true)} className={`rounded-xl px-3 py-2 text-sm ${voice ? "bg-red-500/20 text-red-300" : "bg-[#2a2a2a] text-neutral-300"}`}>{voice ? "Listening…" : "🎙"}</button>
+        <button type="button" onClick={() => { if (voice) { try { recognitionRef.current?.stop?.(); } catch {} setVoice(false); } else { setVoiceChat(true); startVoice(); } }} className={`min-h-11 min-w-11 rounded-xl px-3 py-2 text-sm ${voice ? "bg-red-500/20 text-red-300" : voiceChat ? "bg-[#a855f7]/20 text-[#d8b4fe]" : "bg-[#2a2a2a] text-neutral-300"}`}>{voice ? "Listening…" : voiceChat ? "🎙 On" : "🎙"}</button>
         <Button onClick={send} disabled={sending || !input.trim()}>Send</Button>
       </div>
     </div>

@@ -19,7 +19,7 @@ export function BottomNav({ active, onChange }: { active: Tab; onChange: (t: Tab
       <div className="mx-auto flex max-w-2xl items-stretch justify-around px-2 pb-[env(safe-area-inset-bottom)]">
         {items.map((it) => {
           const isActive = active === it.key;
-          return <button key={it.key} onClick={() => { void tapFeedback(); onChange(it.key); }} className={`norou-nav-item ${isActive ? "active" : ""}`}><span>{it.icon}</span><small>{it.label}</small></button>;
+          return <button key={it.key} onClick={() => { void tapFeedback(); onChange(it.key); }} aria-current={isActive ? "page" : undefined} aria-label={`Open ${it.label}`} className={`norou-nav-item ${isActive ? "active" : ""}`}><span>{it.icon}</span><small>{it.label}</small></button>;
         })}
       </div>
     </nav>

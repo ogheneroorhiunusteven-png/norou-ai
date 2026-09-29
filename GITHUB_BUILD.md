@@ -21,7 +21,7 @@ git init
 git add .
 git commit -m "Level Up app"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/norou-ai.git
+git remote add origin https://github.com/YOUR_USERNAME/level-up.git
 git push -u origin main
 ```
 

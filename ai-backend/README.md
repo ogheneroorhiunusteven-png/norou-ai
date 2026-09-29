@@ -1,6 +1,6 @@
-# Norou AI — Free Gemini Backend
+# Nova AI — Free Gemini Backend
 
-This folder is the small server-side proxy used by Norou AI. It keeps your Gemini API key out of the iOS/Android/web app bundle.
+This folder is the small server-side proxy used by Nova AI. It keeps your Gemini API key out of the iOS/Android/web app bundle.
 
 ## 1. Get a Gemini API key
 
@@ -35,11 +35,11 @@ Copy the Vercel deployment URL, for example:
 
 `https://your-norou-ai-backend.vercel.app`
 
-## 3. Connect Norou AI
+## 3. Connect Nova AI
 
-Open Norou AI → Settings → AI Assistant → Backend URL and paste the Vercel URL.
+Open Nova AI → Settings → AI Assistant → Backend URL and paste the Vercel URL.
 
-Save it. Norou will use Gemini when the backend is available and keep its existing Offline Mode when no backend is configured or when you choose not to use AI.
+Save it. Nova will use Gemini when the backend is available and keep its existing Offline Mode when no backend is configured or when you choose not to use AI.
 
 ## Security
 

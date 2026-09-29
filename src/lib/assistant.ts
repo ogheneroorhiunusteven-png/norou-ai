@@ -6,14 +6,13 @@ import { extractActions, parseLocalCommand, type NorouAction } from "./actions";
 import { getFreeOnly, getModelProfile, getRoutingMode } from "./modelHub";
 
 const BACKEND_URL_KEY = "assistant_backend_url";
-const DEFAULT_BACKEND_URL = "https://ai-backend-rust-omega.vercel.app";
 
 export async function getBackendUrl(): Promise<string | null> {
   try {
     const res = await Preferences.get({ key: BACKEND_URL_KEY });
-    return res.value?.trim().replace(/\/+$/, "") || DEFAULT_BACKEND_URL;
+    return res.value || null;
   } catch {
-    return DEFAULT_BACKEND_URL;
+    return null;
   }
 }
 
@@ -113,7 +112,7 @@ function localReply(message: string, state: AppState, mode: AssistantMode): Chat
   const dp = dayProgress(state);
   const openTasks = state.tasks.filter((t) => !t.completed);
   if (/^(hi|hello|hey|yo|hiya)\b/.test(lower)) {
-    return { text: `Hey${state.profile.name ? ` ${state.profile.name}` : ""}. I'm Norou's offline mode. I can still help you organise tasks, notes and your day without an API key.`, newMemories: [], actions: [] };
+    return { text: `Hey${state.profile.name ? ` ${state.profile.name}` : ""}. I'm Nova's offline mode. I can still help you organise tasks, notes and your day without an API key.`, newMemories: [], actions: [] };
   }
   if (lower.includes('status') || lower.includes('progress') || lower.includes('level')) {
     return { text: `You're level ${li.level} with ${state.xp} XP. Today you've completed ${dp.completed}/${dp.total} scheduled activities, and you have ${openTasks.length} open task${openTasks.length === 1 ? '' : 's'}.`, newMemories: [], actions: [] };
@@ -125,11 +124,11 @@ function localReply(message: string, state: AppState, mode: AssistantMode): Chat
   if (lower.includes('focus') || lower.includes('pomodoro')) {
     return { text: `Focus session\n\n25 minutes: work on ${openTasks[0]?.title || 'your most important task'}.\n5 minutes: take a break.\nThen decide whether to repeat or move to the next task.`, newMemories: [], actions: [] };
   }
-  if (mode === 'study') return { text: `Study mode is available offline. Pick one specific topic and work on it for 25 minutes, then test yourself without looking at your notes. Connect an AI backend when you want Norou to explain or quiz you dynamically.`, newMemories: [], actions: [] };
-  if (mode === 'code') return { text: `Coding mode is available offline for project organisation, but code generation and debugging require an AI backend. You can still use Norou's notes, tasks and focus tools without one.`, newMemories: [], actions: [] };
+  if (mode === 'study') return { text: `Study mode is available offline. Pick one specific topic and work on it for 25 minutes, then test yourself without looking at your notes. Connect an AI backend when you want Nova to explain or quiz you dynamically.`, newMemories: [], actions: [] };
+  if (mode === 'code') return { text: `Coding mode is available offline for project organisation, but code generation and debugging require an AI backend. You can still use Nova's notes, tasks and focus tools without one.`, newMemories: [], actions: [] };
   if (mode === 'research') return { text: `Research mode needs an internet/search provider to verify current information. Offline mode won't invent sources or pretend it searched the web.`, newMemories: [], actions: [] };
-  if (mode === 'creative') return { text: `Creative mode is available offline for organising ideas. Connect an AI backend when you want Norou to generate substantial creative content.`, newMemories: [], actions: [] };
-  return { text: `I'm running in offline mode, so I don't have an AI model connected right now. I can still help with your local Norou data, tasks, notes, focus sessions and progress. Add a backend URL in Settings → AI Assistant to enable full AI responses.`, newMemories: [], actions: [] };
+  if (mode === 'creative') return { text: `Creative mode is available offline for organising ideas. Connect an AI backend when you want Nova to generate substantial creative content.`, newMemories: [], actions: [] };
+  return { text: `I'm running in offline mode, so I don't have an AI model connected right now. I can still help with your local Nova data, tasks, notes, focus sessions and progress. Add a backend URL in Settings → AI Assistant to enable full AI responses.`, newMemories: [], actions: [] };
 }
 
 

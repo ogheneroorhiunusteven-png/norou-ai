@@ -19,13 +19,15 @@ const shiftMonth = (key: string, amount: number) => { const d = new Date(`${key}
 const dateForMonth = (key: string) => key === monthKey() ? todayKey() : `${key}-01`;
 
 export function Money() {
-  const { state, getBudgetExpenses, setMonthlyIncome, addBudgetExpense, updateBudgetExpense, deleteBudgetExpense, setBudgetRule } = useStore();
+  const { state, getBudgetExpenses, setMonthlyIncome, setUnexpectedIncome, addBudgetExpense, updateBudgetExpense, deleteBudgetExpense, setBudgetRule } = useStore();
   const [month, setMonth] = useState(monthKey());
   const [incomeOpen, setIncomeOpen] = useState(false);
+  const [unexpectedOpen, setUnexpectedOpen] = useState(false);
   const [expenseOpen, setExpenseOpen] = useState(false);
   const [ruleOpen, setRuleOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [income, setIncome] = useState(String(state.budget.monthlyIncome || ""));
+  const [unexpectedIncome, setUnexpectedIncomeDraft] = useState("");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | BudgetCategory>("all");
   const [showAll, setShowAll] = useState(false);
@@ -40,13 +42,15 @@ export function Money() {
   }, { needs: 0, wants: 0, savings: 0 } as Record<BudgetCategory, number>), [expenses]);
 
   const incomeValue = state.budget.monthlyIncome;
+  const unexpectedValue = state.unexpectedIncomeByMonth[month] ?? 0;
+  const availableIncome = incomeValue + unexpectedValue;
   const spent = totals.needs + totals.wants + totals.savings;
-  const left = incomeValue - spent;
+  const left = availableIncome - spent;
   const ruleTotal = state.budget.needsPct + state.budget.wantsPct + state.budget.savingsPct;
   const target = {
-    needs: incomeValue * state.budget.needsPct / 100,
-    wants: incomeValue * state.budget.wantsPct / 100,
-    savings: incomeValue * state.budget.savingsPct / 100,
+    needs: availableIncome * state.budget.needsPct / 100,
+    wants: availableIncome * state.budget.wantsPct / 100,
+    savings: availableIncome * state.budget.savingsPct / 100,
   };
 
   const now = new Date();
@@ -56,7 +60,7 @@ export function Money() {
   const remainingDays = isCurrentMonth ? Math.max(0, daysInMonth - now.getDate()) : 0;
   const dailySpend = elapsedDays ? spent / elapsedDays : 0;
   const projectedSpend = isCurrentMonth ? dailySpend * daysInMonth : spent;
-  const pacePct = incomeValue ? projectedSpend / incomeValue * 100 : 0;
+  const pacePct = availableIncome ? projectedSpend / availableIncome * 100 : 0;
   const budgetStatus = !incomeValue ? "Add your income" : left < 0 ? "Over income" : pacePct > 100 ? "Above pace" : pacePct > 90 ? "Near limit" : "On track";
 
   const filteredExpenses = useMemo(() => {
@@ -72,6 +76,18 @@ export function Money() {
   const chartNeeds = state.budget.needsPct;
   const chartWants = chartNeeds + state.budget.wantsPct;
   const chart = `conic-gradient(#a855f7 0 ${chartNeeds}%, #c99bf7 ${chartNeeds}% ${chartWants}%, #7c3aed ${chartWants}% 100%)`;
+
+  const openUnexpectedIncome = () => {
+    setUnexpectedIncomeDraft(String(unexpectedValue || ""));
+    setUnexpectedOpen(true);
+  };
+
+  const saveUnexpectedIncome = () => {
+    const n = Number(unexpectedIncome);
+    if (!Number.isFinite(n) || n < 0) return;
+    setUnexpectedIncome(month, n);
+    setUnexpectedOpen(false);
+  };
 
   const saveIncome = () => {
     const n = Number(income);
@@ -115,10 +131,16 @@ export function Money() {
   return (
     <div className="space-y-4 pb-4">
       <header className="norou-page-head pt-1">
-        <div><div className="norou-eyebrow">NOROU MONEY</div><h1>Money</h1><p>A simple monthly cockpit for your spending plan.</p></div>
-        <button className="norou-money-income" onClick={() => { setIncome(String(incomeValue || "")); setIncomeOpen(true); }}>
-          <small>MONTHLY INCOME</small><strong>{money(incomeValue)}</strong>
-        </button>
+        <div><div className="norou-eyebrow">NOVA MONEY</div><h1>Money</h1><p>A simple monthly cockpit for your spending plan.</p></div>
+        <div className="norou-money-income-row">
+          <button className="norou-money-income" onClick={() => { setIncome(String(incomeValue || "")); setIncomeOpen(true); }}>
+            <small>MONTHLY INCOME</small><strong>{money(incomeValue)}</strong>
+          </button>
+          <button className="norou-money-income norou-money-income-unexpected" onClick={openUnexpectedIncome}>
+            <small>UNEXPECTED INCOME</small><strong>{money(unexpectedValue)}</strong>
+            <span>{unexpectedValue ? "This month" : "+ Add"}</span>
+          </button>
+        </div>
       </header>
 
       <Card className="norou-money-month p-3">
@@ -133,18 +155,18 @@ export function Money() {
           <div>
             <div className="norou-eyebrow">{left >= 0 ? "LEFT TO BUDGET" : "OVER INCOME"}</div>
             <div className={`norou-money-left ${left < 0 ? "negative" : ""}`}>{money(Math.abs(left))}</div>
-            <p className="text-xs text-neutral-500 mt-1">{money(spent)} logged · {budgetStatus}</p>
+            <p className="text-xs text-neutral-500 mt-1">{money(spent)} logged · {budgetStatus}{unexpectedValue ? ` · ${money(unexpectedValue)} extra income` : ""}</p>
           </div>
           <div className="norou-money-donut" style={{ background: chart }}><div><strong>{state.budget.needsPct}/{state.budget.wantsPct}/{state.budget.savingsPct}</strong><small>RULE</small></div></div>
         </div>
         <div className="mt-5 h-2 rounded-full bg-white/7 overflow-hidden"><div className={`h-full rounded-full transition-all ${left < 0 ? "bg-red-400" : "bg-[#a855f7]"}`} style={{ width: `${incomeValue ? Math.min(100, spent / incomeValue * 100) : 0}%` }} /></div>
-        <div className="mt-2 flex justify-between text-[9px] font-bold text-neutral-500"><span>{money(spent)} logged</span><span>{money(incomeValue)} planned</span></div>
+        <div className="mt-2 flex justify-between text-[9px] font-bold text-neutral-500"><span>{money(spent)} logged</span><span>{money(availableIncome)} available</span></div>
       </Card>
 
       <section className="norou-money-insight-grid">
         <Card className="p-4"><small className="norou-money-kicker">SPENDING PACE</small><strong>{incomeValue ? `${Math.round(pacePct)}%` : "—"}</strong><span>{isCurrentMonth ? `${money(dailySpend)}/day average` : "month total"}</span></Card>
         <Card className="p-4"><small className="norou-money-kicker">REMAINING DAYS</small><strong>{isCurrentMonth ? remainingDays : "—"}</strong><span>{isCurrentMonth ? "in this month" : "historical view"}</span></Card>
-        <Card className="p-4"><small className="norou-money-kicker">PROJECTED</small><strong>{incomeValue ? money(projectedSpend) : "—"}</strong><span>{isCurrentMonth ? "at current pace" : "logged"}</span></Card>
+        <Card className="p-4"><small className="norou-money-kicker">PROJECTED</small><strong>{availableIncome ? money(projectedSpend) : "—"}</strong><span>{isCurrentMonth ? "at current pace" : "logged"}</span></Card>
       </section>
 
       <section className="grid grid-cols-3 gap-2">
@@ -176,9 +198,22 @@ export function Money() {
         {filteredExpenses.length > 6 && <button onClick={() => setShowAll((v) => !v)} className="w-full py-3 text-xs font-bold text-violet-300">{showAll ? "Show less" : `Show all ${filteredExpenses.length} expenses`}</button>}
       </div>}
 
-      <Card className="p-4 norou-money-note"><div className="text-xs font-black text-white">Planning note</div><p className="text-[10px] text-neutral-500 mt-1.5 leading-relaxed">Norou keeps this budget on your device. The 50/30/20 split is a general budgeting framework; your real needs and priorities may call for a different mix.</p></Card>
+      <Card className="p-4 norou-money-note"><div className="text-xs font-black text-white">Planning note</div><p className="text-[10px] text-neutral-500 mt-1.5 leading-relaxed">Nova keeps this budget on your device. The 50/30/20 split is a general budgeting framework; your real needs and priorities may call for a different mix.</p></Card>
 
       <Modal open={incomeOpen} onClose={() => setIncomeOpen(false)} title="Monthly income"><div className="space-y-4"><label className="block"><span className="text-xs font-bold text-neutral-300">Planned monthly income</span><input autoFocus inputMode="decimal" value={income} onChange={(e) => setIncome(e.target.value)} className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 p-3 text-white outline-none" placeholder="2500" /></label><button onClick={saveIncome} className="w-full rounded-xl bg-[#a855f7] p-3 text-sm font-black text-white">Save income</button></div></Modal>
+
+      <Modal open={unexpectedOpen} onClose={() => setUnexpectedOpen(false)} title="Unexpected income">
+        <div className="space-y-4">
+          <div className="rounded-xl bg-[#a855f7]/10 border border-[#a855f7]/20 p-3">
+            <div className="text-xs font-black text-white">Extra money this month</div>
+            <p className="text-[10px] text-neutral-500 mt-1">Use this for bonuses, refunds, gifts or other income you didn't include in your normal monthly plan.</p>
+          </div>
+          <label className="block"><span className="text-xs font-bold text-neutral-300">Unexpected income</span><input autoFocus inputMode="decimal" value={unexpectedIncome} onChange={(e) => setUnexpectedIncomeDraft(e.target.value)} className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 p-3 text-white outline-none" placeholder="250" /></label>
+          <div className="text-[10px] text-neutral-500">This is saved for <strong className="text-neutral-300">{monthLabel(month)}</strong> only.</div>
+          <button onClick={saveUnexpectedIncome} className="w-full rounded-xl bg-[#a855f7] p-3 text-sm font-black text-white">Save extra income</button>
+          {unexpectedValue > 0 && <button onClick={() => { setUnexpectedIncome(month, 0); setUnexpectedOpen(false); }} className="w-full rounded-xl border border-white/10 p-3 text-xs font-bold text-red-300">Remove unexpected income</button>}
+        </div>
+      </Modal>
 
       <Modal open={ruleOpen} onClose={() => setRuleOpen(false)} title="Budget split"><div className="space-y-4"><p className="text-xs text-neutral-500">Adjust the three percentages. They must add up to 100%.</p>{categories.map((c) => <label key={c.key} className="block"><div className="flex justify-between text-xs font-bold text-neutral-300"><span>{c.label}</span><span>{ruleDraft[c.key]}%</span></div><input type="range" min="0" max="100" value={ruleDraft[c.key]} onChange={(e) => setRuleDraft({ ...ruleDraft, [c.key]: Number(e.target.value) })} className="w-full mt-2" /></label>)}<div className={`rounded-xl p-3 text-xs font-bold ${ruleDraft.needs + ruleDraft.wants + ruleDraft.savings === 100 ? "bg-emerald-500/10 text-emerald-300" : "bg-amber-500/10 text-amber-300"}`}>Total: {ruleDraft.needs + ruleDraft.wants + ruleDraft.savings}%</div><div className="grid grid-cols-2 gap-2"><button onClick={() => setRuleDraft({ needs: 50, wants: 30, savings: 20 })} className="rounded-xl border border-white/10 p-3 text-xs font-bold text-neutral-300">Reset 50/30/20</button><button disabled={ruleDraft.needs + ruleDraft.wants + ruleDraft.savings !== 100} onClick={saveRules} className="rounded-xl bg-[#a855f7] p-3 text-xs font-black text-white disabled:opacity-40">Save split</button></div></div></Modal>
 

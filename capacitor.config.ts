@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   // domain/name before creating the real App ID in Apple/Google's
   // developer consoles (it must be globally unique).
   appId: "com.norouai.app",
-  appName: "Norou AI",
+  appName: "Nova AI",
   // Next.js static export lands in ./out
   webDir: "out",
   ios: {

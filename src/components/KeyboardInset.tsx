@@ -23,6 +23,15 @@ export function KeyboardInset() {
 
     let cleanup: (() => void) | undefined;
     let cancelled = false;
+    const syncVisualViewport = () => {
+      const vv = window.visualViewport;
+      if (!vv) return;
+      const keyboard = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      document.documentElement.style.setProperty("--visual-keyboard-inset", `${keyboard}px`);
+    };
+    syncVisualViewport();
+    window.visualViewport?.addEventListener("resize", syncVisualViewport);
+    window.visualViewport?.addEventListener("scroll", syncVisualViewport);
 
     (async () => {
       try {
@@ -41,6 +50,8 @@ export function KeyboardInset() {
         cleanup = () => {
           showListener.remove();
           hideListener.remove();
+          window.visualViewport?.removeEventListener("resize", syncVisualViewport);
+          window.visualViewport?.removeEventListener("scroll", syncVisualViewport);
         };
       } catch {
         /* Keyboard plugin unavailable (e.g. web) — no-op, --keyboard-inset stays unset/0. */
@@ -50,6 +61,8 @@ export function KeyboardInset() {
     return () => {
       cancelled = true;
       cleanup?.();
+      window.visualViewport?.removeEventListener("resize", syncVisualViewport);
+      window.visualViewport?.removeEventListener("scroll", syncVisualViewport);
     };
   }, []);
 

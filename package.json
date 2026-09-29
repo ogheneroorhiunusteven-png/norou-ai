@@ -1,5 +1,5 @@
 {
-  "name": "norou-ai",
+  "name": "nova-ai",
   "private": true,
   "scripts": {
     "dev": "next dev",

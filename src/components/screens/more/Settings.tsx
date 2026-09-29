@@ -74,7 +74,7 @@ export function Settings() {
       updateNotifications({ enabled: false });
       showToast(
         isNative()
-          ? "Permission denied. Enable it in iOS Settings > Norou AI."
+          ? "Permission denied. Enable it in iOS Settings > Nova AI."
           : "Permission denied by browser"
       );
     }
@@ -124,8 +124,8 @@ export function Settings() {
         ))}
         <p className="mt-2 text-[11px] text-neutral-500 leading-relaxed">
           {isNative()
-            ? "Notifications are scheduled with your device and will arrive even when Norou AI is closed. Changes to your schedule re-sync automatically."
-            : "Web browsers cannot reliably deliver scheduled notifications when the app is closed. Norou AI shows browser notifications for activity starts while this tab is open. Install the iOS app for notifications that work in the background."}
+            ? "Notifications are scheduled with your device and will arrive even when Nova AI is closed. Changes to your schedule re-sync automatically."
+            : "Web browsers cannot reliably deliver scheduled notifications when the app is closed. Nova AI shows browser notifications for activity starts while this tab is open. Install the iOS app for notifications that work in the background."}
         </p>
       </Card>
 
@@ -133,7 +133,7 @@ export function Settings() {
       <Card className="p-5">
         <SectionTitle>AI Assistant</SectionTitle>
         <p className="text-xs text-neutral-400 mb-3">
-          Optional: connect the optional Gemini AI backend for full AI chat, coding, study and research. Without one, Norou automatically uses Offline Mode for local assistant features. Your Gemini API key lives only on the backend — never in this app.
+          Optional: connect the optional Gemini AI backend for full AI chat, coding, study and research. Without one, Nova automatically uses Offline Mode for local assistant features. Your Gemini API key lives only on the backend — never in this app.
         </p>
         <Field label="Backend URL">
           <input
@@ -155,7 +155,7 @@ export function Settings() {
       <Card className="p-5">
         <SectionTitle>🧠 Model Hub</SectionTitle>
         <p className="text-xs text-neutral-400 mb-3">
-          Choose how Norou routes AI work. Provider credentials stay on your server; this app never stores provider API keys.
+          Choose how Nova routes AI work. Provider credentials stay on your server; this app never stores provider API keys.
         </p>
         <Field label="Model profile">
           <select
@@ -188,7 +188,7 @@ export function Settings() {
 
         {freeOnly && (
           <div className="rounded-xl border border-[#a855f7]/20 bg-[#a855f7]/5 p-3 mb-3 text-[11px] text-neutral-300 leading-relaxed">
-            Norou will not intentionally use Gemini/OpenAI paid API routes while this is on. Local tools always work without an API key. For full local AI, connect Ollama. Free cloud models can still have provider rate limits.
+            Nova will not intentionally use Gemini/OpenAI paid API routes while this is on. Local tools always work without an API key. For full local AI, connect Ollama. Free cloud models can still have provider rate limits.
           </div>
         )}
         <Field label="Routing">
@@ -217,7 +217,7 @@ export function Settings() {
           ))}
         </div>
         <p className="mt-3 text-[11px] text-neutral-500">
-          Gemini, OpenAI-compatible, OpenRouter and Ollama profiles are supported by the backend when their server-side environment variables are configured. “Auto” safely falls back to local Norou tools if no provider is available.
+          Gemini, OpenAI-compatible, OpenRouter and Ollama profiles are supported by the backend when their server-side environment variables are configured. “Auto” safely falls back to local Nova tools if no provider is available.
         </p>
       </Card>
 
@@ -227,7 +227,7 @@ export function Settings() {
         <div className="flex items-center gap-3">
           <div className="text-3xl">⭐</div>
           <div>
-            <div className="text-lg font-black text-white">Norou AI</div>
+            <div className="text-lg font-black text-white">Nova AI</div>
             <div className="text-xs text-neutral-400">Version 1.0.0</div>
             <div className="text-xs text-[#c99bf7] mt-1">Turn your routine into progress.</div>
           </div>

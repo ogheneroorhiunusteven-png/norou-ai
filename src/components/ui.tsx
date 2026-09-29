@@ -6,13 +6,13 @@ import { createPortal } from "react-dom";
 export function Card({
   children,
   className = "",
-  id,
   onClick,
+  id,
 }: {
   children: React.ReactNode;
   className?: string;
-  id?: string;
   onClick?: () => void;
+  id?: string;
 }) {
   return (
     <div
@@ -53,7 +53,7 @@ export function Button({
   disabled?: boolean;
 }) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all active:scale-95 disabled:opacity-40 disabled:active:scale-100";
+    "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all active:scale-[.98] disabled:opacity-40 disabled:active:scale-100 touch-manipulation";
   const variants: Record<string, string> = {
     primary: "bg-[#a855f7] text-white hover:bg-[#9333ea]",
     ghost: "bg-white/5 text-white hover:bg-white/10 border border-white/10",
@@ -122,7 +122,7 @@ export function Modal({
           <h3 className="text-lg font-bold">{title}</h3>
           <button
             onClick={onClose}
-            className="h-8 w-8 rounded-full bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10 flex items-center justify-center"
+            className="min-h-11 min-w-11 rounded-xl bg-white/5 text-neutral-300 hover:text-white hover:bg-white/10 flex items-center justify-center touch-manipulation"
             aria-label="Close"
           >
             ✕

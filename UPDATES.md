@@ -33,3 +33,12 @@ The v8 source was checked from the complete v7 ZIP. A clean `npm ci` could not c
 - Added safe provider discovery for Auto mode: Gemini → OpenRouter → OpenAI-compatible → Ollama when configured.
 - Vision requests can use compatible multimodal providers when their backend is configured.
 - Full `npm run typecheck` remains blocked in this environment because the supplied dependency tree is missing type-definition packages. A TypeScript transpile/syntax pass completed successfully across all 48 TS/TSX files.
+
+
+## v19 Voice Chat reliability
+- Voice recognition now starts directly from the microphone button tap for better iOS reliability.
+- Voice chat can automatically submit the recognised request and speak Norou's response.
+- Listening, thinking, and speaking states are kept separate.
+- Recognition is aborted cleanly when the Command Centre/Assistant closes.
+- Added iOS NSMicrophoneUsageDescription permission for native builds.
+- Unsupported WebView/browser speech recognition now reports a clear fallback instead of silently failing.

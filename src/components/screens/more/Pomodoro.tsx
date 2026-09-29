@@ -16,7 +16,7 @@ export function Pomodoro() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    const onNorouFocus = (event: Event) => {
+    const onNovaFocus = (event: Event) => {
       const detail = (event as CustomEvent<{ minutes?: number; task?: string }>).detail;
       const minutes = Math.max(1, Math.min(180, Math.round(detail?.minutes ?? 25)));
       setQueue([]);
@@ -36,9 +36,9 @@ export function Pomodoro() {
       setRemaining(first.minutes * 60);
       setRunning(true);
     };
-    window.addEventListener("norou:focus", onNorouFocus);
+    window.addEventListener("norou:focus", onNovaFocus);
     window.addEventListener("norou:autopilot", onAutopilot);
-    return () => { window.removeEventListener("norou:focus", onNorouFocus); window.removeEventListener("norou:autopilot", onAutopilot); };
+    return () => { window.removeEventListener("norou:focus", onNovaFocus); window.removeEventListener("norou:autopilot", onAutopilot); };
   }, []);
 
   useEffect(() => {

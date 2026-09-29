@@ -1,4 +1,4 @@
-// Central data model types for Norou AI
+// Central data model types for Nova AI
 
 export type DayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0 = Sunday
 
@@ -218,6 +218,7 @@ export interface AppState {
   meals: MealsByDate;
   budget: BudgetProfile;
   budgetExpenses: BudgetExpensesByMonth;
+  unexpectedIncomeByMonth: Record<string, number>;
   goals: Goal[];
   tasks: Task[];
   calendarEvents: CalendarEvent[];

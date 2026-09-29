@@ -15,7 +15,7 @@ async function ensureChannel(): Promise<void> {
   try {
     await LocalNotifications.createChannel({
       id: CHANNEL_ID,
-      name: "Norou AI Reminders",
+      name: "Nova AI Reminders",
       description: "Schedule alerts, quests, and daily motivation",
       importance: 5, // MAX — heads-up + sound + vibration
       sound: "default",

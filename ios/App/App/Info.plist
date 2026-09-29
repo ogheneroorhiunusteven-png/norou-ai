@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>Norou AI</string>
+        <string>Nova AI</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -23,11 +23,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Norou AI uses the camera to scan food barcodes for nutrition logging.</string>
+	<string>Nova AI uses the camera to scan food barcodes for nutrition logging.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Nova AI uses the microphone for voice chat and voice commands.</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Norou AI reads your step count and active calories to show them in the Health tab.</string>
+	<string>Nova AI reads your step count and active calories to show them in the Health tab.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Norou AI does not write to Health, but iOS requires this key to be present.</string>
+	<string>Nova AI does not write to Health, but iOS requires this key to be present.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
