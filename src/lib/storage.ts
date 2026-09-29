@@ -2,7 +2,7 @@ import type { AppState } from "./types";
 import { buildSeedActivities, buildSeedWorkouts, buildAchievements } from "./seed";
 
 export const STORAGE_KEY = "levelup:v1";
-export const CURRENT_VERSION = 1;
+export const CURRENT_VERSION = 2;
 
 export function defaultState(): AppState {
   return {
@@ -13,6 +13,8 @@ export function defaultState(): AppState {
     activities: [],
     completions: {},
     meals: {},
+    budget: { monthlyIncome: 0, needsPct: 50, wantsPct: 30, savingsPct: 20, currency: "GBP" },
+    budgetExpenses: {},
     goals: [],
     tasks: [],
     calendarEvents: [],
@@ -75,6 +77,7 @@ export function sanitize(raw: unknown): AppState {
   const rProfile = rec(r.profile);
   const rHealthGoals = rec(r.healthGoals);
   const rNutrition = rec(r.nutritionGoals);
+  const rBudget = rec(r.budget);
   const rNotif = rec(r.notifications);
   const rStreak = rec(r.streak);
 
@@ -86,6 +89,14 @@ export function sanitize(raw: unknown): AppState {
     activities: (arr(r.activities).filter(isValidActivity) as unknown) as AppState["activities"],
     completions: sanitizeCompletions(r.completions),
     meals: sanitizeMeals(r.meals),
+    budget: {
+      monthlyIncome: Math.max(0, num(rBudget.monthlyIncome, d.budget.monthlyIncome)),
+      needsPct: Math.max(0, num(rBudget.needsPct, d.budget.needsPct)),
+      wantsPct: Math.max(0, num(rBudget.wantsPct, d.budget.wantsPct)),
+      savingsPct: Math.max(0, num(rBudget.savingsPct, d.budget.savingsPct)),
+      currency: str(rBudget.currency, d.budget.currency),
+    },
+    budgetExpenses: sanitizeBudgetExpenses(r.budgetExpenses),
     goals: (arr(r.goals).filter((g) => g && typeof g === "object") as unknown) as AppState["goals"],
     tasks: (arr(r.tasks)
       .filter((t) => t && typeof t === "object")
@@ -213,6 +224,25 @@ function sanitizeMeals(v: unknown): AppState["meals"] {
     if (Array.isArray(list)) {
       out[k] = list.filter((m) => m && typeof m === "object");
     }
+  }
+  return out;
+}
+
+function sanitizeBudgetExpenses(v: unknown): AppState["budgetExpenses"] {
+  if (!v || typeof v !== "object") return {};
+  const out: AppState["budgetExpenses"] = {};
+  for (const [month, list] of Object.entries(v as Record<string, unknown>)) {
+    if (!Array.isArray(list)) continue;
+    out[month] = list.filter((x) => x && typeof x === "object").map((x) => {
+      const r = x as Record<string, unknown>;
+      return {
+        id: str(r.id, "") || `expense_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        date: str(r.date, month + "-01"),
+        label: str(r.label, "Expense"),
+        amount: Math.max(0, num(r.amount, 0)),
+        category: (["needs", "wants", "savings"].includes(r.category as string) ? r.category : "needs") as AppState["budgetExpenses"][string][number]["category"],
+      };
+    });
   }
   return out;
 }

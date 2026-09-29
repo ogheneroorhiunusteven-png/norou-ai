@@ -15,7 +15,7 @@ async function ensureChannel(): Promise<void> {
   try {
     await LocalNotifications.createChannel({
       id: CHANNEL_ID,
-      name: "Level Up Reminders",
+      name: "Norou AI Reminders",
       description: "Schedule alerts, quests, and daily motivation",
       importance: 5, // MAX — heads-up + sound + vibration
       sound: "default",
@@ -191,7 +191,7 @@ export async function rescheduleAll(state: AppState): Promise<void> {
     }
   }
 
-  // "Morning plan" — a genuinely different quote each morning, plus that
+  // "Wake-up quote" — a genuinely different quote each morning, plus that
   // day's activity summary. Scheduling this as ONE weekly-repeating
   // notification can't vary its text by date, so instead we schedule 14
   // separate one-off notifications (today through +13 days), each with
@@ -212,12 +212,12 @@ export async function rescheduleAll(state: AppState): Promise<void> {
         : "Nothing scheduled today. A good day to add one small win.";
 
       const fireAt = new Date(date);
-      fireAt.setHours(8, 0, 0, 0);
+      fireAt.setHours(7, 0, 0, 0);
       if (fireAt.getTime() < Date.now()) continue; // don't schedule times already passed today
 
       queue.push({
         id: ID_RANGE.morningPlan + i,
-        title: "Today's motivation",
+        title: "Wake-up quote of the day",
         body: `"${quoteForDate(date)}" — ${summary}`,
         sound: "default",
         channelId: CHANNEL_ID,

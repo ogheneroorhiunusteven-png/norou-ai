@@ -5,6 +5,7 @@ import { useStore } from "@/lib/store";
 import { isHealthAvailable, requestHealthPermission, getTodayStats } from "@/lib/health-native";
 import { Card, ProgressBar, Modal, Field, inputClass, Button, SectionTitle } from "../ui";
 import type { MoodValue } from "@/lib/types";
+import { ExerciseCoach } from "../ExerciseCoach";
 
 const MOODS: { value: MoodValue; emoji: string; label: string }[] = [
   { value: 0, emoji: "😫", label: "Rough" },
@@ -22,6 +23,7 @@ export function Health() {
   const [editing, setEditing] = useState<null | "hr" | "water" | "cal">(null);
   const [val, setVal] = useState("");
   const [syncing, setSyncing] = useState(false);
+  const [exerciseCoach, setExerciseCoach] = useState(false);
   const [syncMsg, setSyncMsg] = useState<string | null>(null);
 
   const syncFromHealth = async () => {
@@ -68,6 +70,16 @@ export function Health() {
         <h1 className="text-2xl font-black text-white">Health</h1>
         <p className="text-sm text-neutral-400">Your wellness at a glance</p>
       </header>
+
+      <button onClick={() => setExerciseCoach(true)} className="w-full rounded-2xl border border-[#a855f7]/30 bg-[#a855f7]/10 px-4 py-4 text-left transition active:scale-[.99]">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#a855f7]/15 text-2xl">🏋️</div>
+          <div className="flex-1"><div className="font-black text-white">Exercise Coach</div><div className="text-xs text-neutral-400">Animated demos + step-by-step form guidance</div></div>
+          <span className="text-[#c99bf7]">›</span>
+        </div>
+      </button>
+
+      {exerciseCoach && <div className="fixed inset-0 z-[80] overflow-y-auto bg-black/95 px-4 pt-5 pb-10 backdrop-blur-md"><div className="mx-auto max-w-2xl"><ExerciseCoach onClose={() => setExerciseCoach(false)} /></div></div>}
 
       {/* Heart rate */}
       <Card className="p-5">

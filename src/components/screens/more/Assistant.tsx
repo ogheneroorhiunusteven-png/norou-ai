@@ -12,6 +12,8 @@ export function Assistant() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [voice, setVoice] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -21,6 +23,30 @@ export function Assistant() {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+
+  useEffect(() => {
+    if (!voice) return;
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) { setVoice(false); setError("Voice input is not supported here."); return; }
+    const recognition = new SR();
+    recognition.lang = "en-GB";
+    recognition.interimResults = false;
+    recognition.onresult = (event: any) => setInput(event.results?.[0]?.[0]?.transcript ?? "");
+    recognition.onerror = () => setVoice(false);
+    recognition.onend = () => setVoice(false);
+    recognition.start();
+    return () => { try { recognition.stop(); } catch {} };
+  }, [voice]);
+
+  const speak = (text: string) => {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.onstart = () => setSpeaking(true);
+    u.onend = () => setSpeaking(false);
+    window.speechSynthesis.speak(u);
+  };
 
   const send = async () => {
     const text = input.trim();
@@ -33,6 +59,7 @@ export function Assistant() {
     try {
       const reply = await sendChatMessage(next, state);
       setMessages([...next, { role: "assistant", content: reply.text }]);
+      if (speaking) window.speechSynthesis.cancel();
       for (const fact of reply.newMemories) addMemory(fact, "ai");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -43,26 +70,16 @@ export function Assistant() {
 
   if (configured === null) return null; // brief flash while checking Preferences
 
-  if (!configured) {
-    return (
-      <Card className="p-5 text-center space-y-2">
-        <div className="text-3xl mb-1">🤖</div>
-        <p className="text-sm font-semibold text-white">AI Assistant isn&apos;t set up yet</p>
-        <p className="text-xs text-neutral-400">
-          This needs a backend URL configured in Settings → AI Assistant first — see the setup guide in the project&apos;s{" "}
-          <code className="text-neutral-300">ai-backend/README.md</code> for the two-minute deploy.
-        </p>
-      </Card>
-    );
-  }
 
   return (
-    <div className="flex flex-col h-[70vh]">
-      <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+    <div className="flex flex-col chat-height">
+      <div
+        className="flex-1 overflow-y-auto space-y-3 pr-1"
+        style={{ paddingBottom: "var(--keyboard-inset, 0px)" }}
+      >
         {messages.length === 0 && (
           <Card className="p-4 text-sm text-neutral-400">
-            Ask about your progress, get advice on your routine, or just say what&apos;s on your mind. I can see your level,
-            streaks, and today&apos;s activity.
+            Ask about your progress, get advice on your routine, or just say what&apos;s on your mind. {configured ? "Full AI is connected." : "Offline mode is active — no API key is required for local features."}
           </Card>
         )}
         {messages.map((m, i) => (
@@ -73,10 +90,11 @@ export function Assistant() {
               }`}
             >
               {m.content}
+              {m.role === "assistant" && <button onClick={() => speak(m.content)} className="ml-2 text-[10px] text-neutral-500">🔊</button>}
             </div>
           </div>
         ))}
-        {sending && <div className="text-xs text-neutral-500 px-2">Thinking…</div>}
+        {sending && <div className="text-xs text-neutral-500 px-2">Norou is thinking…</div>}
         {error && <div className="text-xs text-red-400 px-2">{error}</div>}
         <div ref={scrollRef} />
       </div>
@@ -89,9 +107,8 @@ export function Assistant() {
           onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), send())}
           disabled={sending}
         />
-        <Button onClick={send} disabled={sending || !input.trim()}>
-          Send
-        </Button>
+        <button onClick={() => setVoice(true)} className={`rounded-xl px-3 py-2 text-sm ${voice ? "bg-red-500/20 text-red-300" : "bg-[#2a2a2a] text-neutral-300"}`}>{voice ? "Listening…" : "🎙"}</button>
+        <Button onClick={send} disabled={sending || !input.trim()}>Send</Button>
       </div>
     </div>
   );

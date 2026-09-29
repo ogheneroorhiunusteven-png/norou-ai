@@ -1,18 +1,22 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 export function Card({
   children,
   className = "",
+  id,
   onClick,
 }: {
   children: React.ReactNode;
   className?: string;
+  id?: string;
   onClick?: () => void;
 }) {
   return (
     <div
+      id={id}
       onClick={onClick}
       className={`rounded-2xl bg-[#2a2a2a] border border-white/5 ${onClick ? "cursor-pointer active:scale-[0.99] transition-transform" : ""} ${className}`}
     >
@@ -74,6 +78,11 @@ export function Modal({
   title: string;
   children: React.ReactNode;
 }) {
+  // Guards the createPortal call below: document only exists client-side,
+  // and Next's static export prerenders this component on the server.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -87,14 +96,26 @@ export function Modal({
     };
   }, [open, onClose]);
 
-  if (!open) return null;
-  return (
+  if (!open || !mounted) return null;
+
+  // Rendered via a portal straight to <body>, deliberately OUTSIDE
+  // .app-scroll. iOS WebKit has a long-standing bug where a `position:
+  // fixed` element nested inside an ancestor using
+  // `-webkit-overflow-scrolling: touch` (which .app-scroll needs for
+  // smooth momentum scrolling) doesn't actually anchor to the real
+  // viewport — it gets visually clipped to that ancestor's bounds
+  // instead. That's what caused the modal to render squeezed into the
+  // content area with the bottom nav bar showing through below it,
+  // instead of covering the full screen. Portaling to body sidesteps
+  // the bug entirely rather than working around its symptoms.
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm animate-fadeIn"
       onClick={onClose}
     >
       <div
-        className="w-full sm:max-w-md max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-[#1a1a1a] border border-white/10 p-5 animate-slideUp"
+        className="w-full sm:max-w-md modal-sheet-height overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-[#1a1a1a] border border-white/10 p-5 animate-slideUp"
+        style={{ paddingBottom: "calc(1.25rem + var(--keyboard-inset, 0px))" }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
@@ -109,7 +130,8 @@ export function Modal({
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

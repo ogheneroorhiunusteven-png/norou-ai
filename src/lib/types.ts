@@ -1,4 +1,4 @@
-// Central data model types for Level Up
+// Central data model types for Norou AI
 
 export type DayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0 = Sunday
 
@@ -156,6 +156,27 @@ export interface NutritionGoals {
   fat: number;
 }
 
+
+export type BudgetCategory = "needs" | "wants" | "savings";
+
+export interface BudgetExpense {
+  id: string;
+  date: string;
+  label: string;
+  amount: number;
+  category: BudgetCategory;
+}
+
+export interface BudgetProfile {
+  monthlyIncome: number;
+  needsPct: number;
+  wantsPct: number;
+  savingsPct: number;
+  currency: string;
+}
+
+export type BudgetExpensesByMonth = Record<string, BudgetExpense[]>;
+
 export interface Achievement {
   id: string;
   title: string;
@@ -195,6 +216,8 @@ export interface AppState {
   activities: Activity[];
   completions: Completions;
   meals: MealsByDate;
+  budget: BudgetProfile;
+  budgetExpenses: BudgetExpensesByMonth;
   goals: Goal[];
   tasks: Task[];
   calendarEvents: CalendarEvent[];

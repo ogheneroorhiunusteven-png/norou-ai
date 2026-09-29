@@ -1,6 +1,6 @@
 {
-  "name": "level-up-ai-backend",
+  "name": "norou-ai-backend",
   "private": true,
   "version": "1.0.0",
-  "description": "Minimal Vercel Edge Function proxying to the Anthropic API. Keeps the API key server-side so the Level Up app never embeds it."
+  "description": "Vercel Edge Function proxying AI requests to Gemini while keeping the API key server-side."
 }

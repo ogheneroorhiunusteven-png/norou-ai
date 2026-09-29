@@ -5,6 +5,8 @@ import type {
   AppState,
   Activity,
   Meal,
+  BudgetExpense,
+  BudgetCategory,
   Goal,
   Task,
   CalendarEvent,
@@ -69,6 +71,13 @@ interface StoreContext {
   addMeal: (m: Omit<Meal, "id">, key?: string) => void;
   updateMeal: (m: Meal, key?: string) => void;
   deleteMeal: (id: string, key?: string) => void;
+  // budget
+  getBudgetExpenses: (key?: string) => BudgetExpense[];
+  setMonthlyIncome: (income: number) => void;
+  addBudgetExpense: (e: Omit<BudgetExpense, "id">, key?: string) => void;
+  updateBudgetExpense: (e: BudgetExpense, key?: string) => void;
+  deleteBudgetExpense: (id: string, key?: string) => void;
+  setBudgetRule: (category: BudgetCategory, pct: number) => void;
   // goals
   addGoal: (g: Omit<Goal, "id" | "createdAt">) => void;
   updateGoal: (g: Goal) => void;
@@ -101,6 +110,7 @@ interface StoreContext {
   updateNotifications: (n: Partial<NotificationSettings>) => void;
   // data
   clearAll: () => void;
+  replaceState: (next: AppState) => void;
   // helpers
   isCompleted: (activityId: string, date?: Date) => boolean;
 }
@@ -142,6 +152,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const clearLevelUpEvent = useCallback(() => setLevelUpEvent(null), []);
+
+  const replaceState = useCallback((next: AppState) => {
+    setState(structuredClone(next));
+  }, []);
 
   // Central mutation helper that runs derived recalcs.
   const mutate = useCallback(
@@ -315,6 +329,46 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const deleteMeal = useCallback((id: string, key: string = dateKey()) => {
     mutate((d) => {
       if (d.meals[key]) d.meals[key] = d.meals[key].filter((x) => x.id !== id);
+    });
+  }, [mutate]);
+
+  // Budget
+  const getBudgetExpenses = useCallback(
+    (key: string = new Date().toISOString().slice(0, 7)): BudgetExpense[] => state.budgetExpenses[key] ?? [],
+    [state.budgetExpenses],
+  );
+
+  const setMonthlyIncome = useCallback((income: number) => {
+    mutate((d) => { d.budget.monthlyIncome = Math.max(0, Math.round(income * 100) / 100); });
+  }, [mutate]);
+
+  const addBudgetExpense = useCallback((e: Omit<BudgetExpense, "id">, key: string = new Date().toISOString().slice(0, 7)) => {
+    mutate((d) => {
+      if (!d.budgetExpenses[key]) d.budgetExpenses[key] = [];
+      d.budgetExpenses[key].unshift({ ...e, id: uid(), amount: Math.max(0, Math.round(e.amount * 100) / 100) });
+    });
+  }, [mutate]);
+
+  const updateBudgetExpense = useCallback((e: BudgetExpense, key: string = new Date().toISOString().slice(0, 7)) => {
+    mutate((d) => {
+      const list = d.budgetExpenses[key] ?? [];
+      const i = list.findIndex((x) => x.id === e.id);
+      if (i >= 0) list[i] = { ...e, amount: Math.max(0, Math.round(e.amount * 100) / 100) };
+    });
+  }, [mutate]);
+
+  const deleteBudgetExpense = useCallback((id: string, key: string = new Date().toISOString().slice(0, 7)) => {
+    mutate((d) => {
+      if (d.budgetExpenses[key]) d.budgetExpenses[key] = d.budgetExpenses[key].filter((x) => x.id !== id);
+    });
+  }, [mutate]);
+
+  const setBudgetRule = useCallback((category: BudgetCategory, pct: number) => {
+    mutate((d) => {
+      const value = Math.max(0, Math.min(100, Math.round(pct)));
+      if (category === "needs") d.budget.needsPct = value;
+      if (category === "wants") d.budget.wantsPct = value;
+      if (category === "savings") d.budget.savingsPct = value;
     });
   }, [mutate]);
 
@@ -529,6 +583,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setWaterGoal,
     setCaloriesGoal,
     getMeals,
+    getBudgetExpenses,
+    setMonthlyIncome,
+    addBudgetExpense,
+    updateBudgetExpense,
+    deleteBudgetExpense,
+    setBudgetRule,
     addMeal,
     updateMeal,
     deleteMeal,
@@ -557,6 +617,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     deleteWorkout,
     updateNotifications,
     clearAll,
+    replaceState,
     isCompleted,
   };
 

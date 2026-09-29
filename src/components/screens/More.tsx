@@ -12,9 +12,11 @@ import { Settings } from "./more/Settings";
 import { Assistant } from "./more/Assistant";
 import { Calendar } from "./more/Calendar";
 import { Memory } from "./more/Memory";
+import { NorouOS } from "./more/NorouOS";
 
 type Sub =
   | "menu"
+  | "norouos"
   | "assistant"
   | "calendar"
   | "memory"
@@ -28,6 +30,7 @@ type Sub =
   | "settings";
 
 const ITEMS: { key: Sub; icon: string; label: string; desc: string }[] = [
+  { key: "norouos", icon: "✦", label: "Norou OS", desc: "AI control layer, planning & vision" },
   { key: "assistant", icon: "🤖", label: "AI Assistant", desc: "Your personal advisor" },
   { key: "calendar", icon: "📅", label: "Calendar", desc: "Dated events & reminders" },
   { key: "memory", icon: "🧠", label: "Memory", desc: "What the AI remembers about you" },
@@ -43,6 +46,7 @@ const ITEMS: { key: Sub; icon: string; label: string; desc: string }[] = [
 
 const TITLES: Record<Sub, string> = {
   menu: "More",
+  norouos: "Norou OS",
   assistant: "AI Assistant",
   calendar: "Calendar",
   memory: "Memory",
@@ -98,6 +102,7 @@ export function More() {
         </button>
         <h1 className="text-2xl font-black text-white">{TITLES[sub]}</h1>
       </header>
+      {sub === "norouos" && <NorouOS />}
       {sub === "assistant" && <Assistant />}
       {sub === "calendar" && <Calendar />}
       {sub === "memory" && <Memory />}

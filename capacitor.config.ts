@@ -1,8 +1,7 @@
 import type { CapacitorConfig } from "@capacitor/cli";
+import { KeyboardResize } from "@capacitor/keyboard";
 
 const config: CapacitorConfig = {
-  // Reverse-DNS bundle ID. CHANGE THIS to your own domain/name before
-  // creating the App ID in your Apple Developer account.
   // Reverse-DNS bundle ID. Still a placeholder — change to your own
   // domain/name before creating the real App ID in Apple/Google's
   // developer consoles (it must be globally unique).
@@ -19,6 +18,18 @@ const config: CapacitorConfig = {
     LocalNotifications: {
       smallIcon: "ic_stat_icon_config_sample",
       iconColor: "#8b5cf6",
+    },
+    Keyboard: {
+      // Critical: tells iOS/Android to NOT resize the webview when the
+      // keyboard opens. Without this, the OS shrinks the whole webview
+      // viewport as the keyboard animates in, and because the app's
+      // layout is height:100%-based (fixed body, for safe-area
+      // handling), that resize fights with our layout mid-animation —
+      // producing a visible jump/glitch. With resize "none", the
+      // keyboard simply overlays on top and we handle keeping the
+      // focused field visible ourselves (see useKeyboardInset.ts).
+      resize: KeyboardResize.None,
+      resizeOnFullScreen: false,
     },
   },
 };

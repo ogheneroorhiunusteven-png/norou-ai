@@ -157,6 +157,36 @@ body {
   overflow-y: auto;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
+  /* Keeps content scrollable above the on-screen keyboard now that the
+     webview itself no longer resizes to make room for it (see
+     KeyboardInset.tsx + capacitor.config.ts Keyboard.resize: "none"). */
+  padding-bottom: var(--keyboard-inset, 0px);
+  transition: padding-bottom 0.15s ease-out;
+}
+
+/* Modal sheet height: vh as a safe fallback for older WebKit, then dvh
+   (dynamic viewport height) where supported — dvh tracks the *actual*
+   visible viewport, so it doesn't fight with the keyboard the way a
+   plain vh value does when the webview no longer resizes on keyboard
+   open (see the Keyboard.resize: "none" config + KeyboardInset.tsx). */
+.modal-sheet-height {
+  max-height: 90vh;
+}
+@supports (max-height: 90dvh) {
+  .modal-sheet-height {
+    max-height: 85dvh;
+  }
+}
+
+/* Same vh->dvh upgrade pattern as .modal-sheet-height, for the AI chat
+   screen's fixed-height message list. */
+.chat-height {
+  height: 70vh;
+}
+@supports (height: 70dvh) {
+  .chat-height {
+    height: 70dvh;
+  }
 }
 
 /* Native feel: no long-press text selection or callout menus */
@@ -172,3 +202,132 @@ textarea {
   -webkit-user-select: text;
   user-select: text;
 }
+
+/* Norou command-centre polish */
+.norou-orb {
+  box-shadow: 0 0 0 1px rgba(168,85,247,.22), 0 0 24px rgba(168,85,247,.22), inset 0 0 20px rgba(168,85,247,.12);
+}
+@keyframes norouPulse {
+  0%,100% { transform: scale(1); box-shadow: 0 0 0 1px rgba(168,85,247,.22), 0 0 22px rgba(168,85,247,.18); }
+  50% { transform: scale(1.035); box-shadow: 0 0 0 1px rgba(168,85,247,.35), 0 0 34px rgba(168,85,247,.30); }
+}
+.norou-pulse { animation: norouPulse 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .norou-pulse { animation: none; } }
+
+/* NOROU HOLOGRAM UI */
+.norou-hero-card{position:relative;overflow:hidden;min-height:390px;border:1px solid rgba(168,85,247,.18);border-radius:30px;background:radial-gradient(circle at 50% 38%,rgba(80,160,255,.11),transparent 24%),radial-gradient(circle at 50% 45%,rgba(168,85,247,.14),transparent 48%),linear-gradient(180deg,rgba(15,15,22,.98),rgba(4,4,8,.98));box-shadow:inset 0 1px rgba(255,255,255,.05),0 20px 70px rgba(0,0,0,.35)}
+.norou-hero-card:before,.norou-hero-card:after{content:"";position:absolute;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,.22),transparent)}.norou-hero-card:before{top:56px}.norou-hero-card:after{bottom:72px}
+.norou-hero-topline{position:relative;z-index:4;display:flex;justify-content:space-between;padding:16px 18px 0;font-size:9px;font-weight:900;letter-spacing:.2em;color:rgba(255,255,255,.38)}.norou-hero-topline span:last-child{color:#b88cff}
+.norou-holo-wrap{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center}.norou-holo-hero{height:285px}.norou-holo-compact{width:58px;height:58px;flex:none}.norou-holo{position:relative;width:230px;height:230px;border:0;background:transparent;cursor:pointer;filter:drop-shadow(0 0 22px rgba(117,173,255,.16));transform:translateZ(0)}.norou-holo-compact .norou-holo{width:58px;height:58px}.norou-holo-aura,.norou-holo-grid,.norou-holo-ring,.norou-holo-core,.norou-holo-core-hot,.norou-holo-particle,.norou-holo-scanline{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.norou-holo-aura{width:68%;height:68%;border-radius:50%;background:radial-gradient(circle,rgba(94,184,255,.18),rgba(168,85,247,.11) 34%,transparent 68%);filter:blur(10px);animation:norouAura 3.5s ease-in-out infinite}.norou-holo-grid{width:74%;height:74%;border-radius:50%;background:repeating-radial-gradient(circle,transparent 0 9px,rgba(123,190,255,.12) 10px 11px,transparent 12px 18px);mask-image:radial-gradient(circle,#000 0 48%,transparent 70%);animation:norouGrid 12s linear infinite}
+.norou-holo-ring{border:1px solid rgba(118,194,255,.38);border-radius:50%;box-shadow:0 0 12px rgba(99,173,255,.14),inset 0 0 10px rgba(168,85,247,.08)}.norou-holo-ring-a{width:58%;height:58%;animation:norouSpin 7s linear infinite;border-left-color:rgba(168,85,247,.8);border-right-color:transparent}.norou-holo-ring-b{width:78%;height:35%;transform:translate(-50%,-50%) rotate(-18deg);animation:norouSpinReverse 9s linear infinite;border-top-color:rgba(126,205,255,.8);border-bottom-color:transparent}.norou-holo-ring-c{width:88%;height:46%;transform:translate(-50%,-50%) rotate(56deg);animation:norouSpin 13s linear infinite;border-color:rgba(168,85,247,.18)}
+.norou-holo-core{width:43%;height:43%;border-radius:50%;background:radial-gradient(circle at 35% 28%,rgba(225,249,255,.95),rgba(114,201,255,.7) 10%,rgba(91,112,255,.34) 28%,rgba(168,85,247,.2) 48%,transparent 72%);box-shadow:0 0 24px rgba(91,191,255,.32),0 0 55px rgba(168,85,247,.2);animation:norouCore 2.8s ease-in-out infinite}.norou-holo-core-hot{width:15%;height:15%;border-radius:50%;background:radial-gradient(circle,#fff,#aeeaff 28%,rgba(168,85,247,.75) 60%,transparent 72%);box-shadow:0 0 20px rgba(170,232,255,.9);animation:norouHot 1.7s ease-in-out infinite}.norou-holo-scanline{width:52%;height:1px;background:linear-gradient(90deg,transparent,rgba(190,232,255,.8),transparent);box-shadow:0 0 10px rgba(130,206,255,.5);animation:norouScan 2.4s ease-in-out infinite}
+.norou-holo-particle{width:4px;height:4px;border-radius:50%;background:#bcecff;box-shadow:0 0 8px #70cfff}.norou-holo-compact .norou-holo-particle{width:2px;height:2px}.p1{margin:-58px 0 0 -30px;animation:norouFloat1 3.2s ease-in-out infinite}.p2{margin:34px 0 0 48px;animation:norouFloat2 2.8s ease-in-out infinite}.p3{margin:55px 0 0 -55px;animation:norouFloat1 4s ease-in-out infinite reverse}.p4{margin:-42px 0 0 64px;animation:norouFloat2 3.6s ease-in-out infinite reverse}.p5{margin:5px 0 0 -74px;animation:norouFloat2 3.1s ease-in-out infinite}.p6{margin:-4px 0 0 78px;animation:norouFloat1 2.7s ease-in-out infinite reverse}
+.norou-holo-caption{display:flex;align-items:center;gap:7px;margin-top:-10px;font-size:9px;font-weight:900;letter-spacing:.2em;color:rgba(190,232,255,.55)}.norou-status-dot{width:6px;height:6px;border-radius:50%;background:#76d7ff;box-shadow:0 0 10px #76d7ff;animation:norouBlink 1.8s ease-in-out infinite}.norou-hero-actions{position:relative;z-index:5;display:flex;justify-content:center;gap:9px;margin-top:13px}.norou-hero-actions button{border:1px solid rgba(168,85,247,.2);background:rgba(255,255,255,.035);color:rgba(255,255,255,.78);border-radius:14px;padding:9px 14px;font-size:11px;font-weight:800;backdrop-filter:blur(10px)}.norou-hero-actions button:active{transform:scale(.96)}
+.norou-mini-launch{width:58px;height:58px;border-radius:50%;border:1px solid rgba(168,85,247,.42);background:radial-gradient(circle at 40% 35%,#bdeaff 0 4%,#8e65ff 18%,#29103b 52%,#09060d 72%);box-shadow:0 0 20px rgba(118,177,255,.22),0 0 45px rgba(168,85,247,.2),inset 0 0 20px rgba(255,255,255,.1);color:white}.norou-mini-launch span{font-size:22px;text-shadow:0 0 12px #aeeaff;animation:norouHot 1.7s ease-in-out infinite;display:block}.norou-command-hero{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.08);background:radial-gradient(circle at 15% 50%,rgba(118,185,255,.09),transparent 28%),rgba(8,8,12,.96)}.norou-command-hero>button{margin-left:auto}.norou-holo-compact .norou-holo{cursor:default}.norou-holo-compact .norou-holo-aura{animation-duration:2s}.norou-holo-compact .norou-holo-ring-a{animation-duration:4s}.norou-holo-compact .norou-holo-ring-b{animation-duration:5s}.norou-holo-awake .norou-holo-aura{animation-duration:.8s}.norou-holo-awake .norou-holo-core{transform:translate(-50%,-50%) scale(1.18)}
+@keyframes norouAura{0%,100%{transform:translate(-50%,-50%) scale(.94);opacity:.65}50%{transform:translate(-50%,-50%) scale(1.08);opacity:1}}@keyframes norouGrid{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}@keyframes norouSpin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}@keyframes norouSpinReverse{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(-360deg)}}@keyframes norouCore{0%,100%{transform:translate(-50%,-50%) scale(.94);opacity:.82}50%{transform:translate(-50%,-50%) scale(1.05);opacity:1}}@keyframes norouHot{0%,100%{transform:translate(-50%,-50%) scale(.8);opacity:.7}50%{transform:translate(-50%,-50%) scale(1.25);opacity:1}}@keyframes norouScan{0%,100%{transform:translate(-50%,-50%) translateY(-32px);opacity:0}20%,80%{opacity:.8}50%{transform:translate(-50%,-50%) translateY(32px)}}@keyframes norouFloat1{0%,100%{transform:translate(-50%,-50%) translate(0,0)}50%{transform:translate(-50%,-50%) translate(5px,-10px)}}@keyframes norouFloat2{0%,100%{transform:translate(-50%,-50%) translate(0,0)}50%{transform:translate(-50%,-50%) translate(-8px,7px)}}@keyframes norouBlink{0%,100%{opacity:.5}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.norou-holo *,.norou-holo{animation:none!important}}
+
+/* Norou OS v2 */
+.norou-os-hero{position:relative;overflow:hidden;background:radial-gradient(circle at 10% 10%,rgba(168,85,247,.18),transparent 38%),radial-gradient(circle at 90% 90%,rgba(72,150,255,.10),transparent 34%),linear-gradient(145deg,#21122f,#141414 55%,#0b0b0d);box-shadow:inset 0 1px rgba(255,255,255,.05),0 18px 55px rgba(0,0,0,.25)}
+.norou-os-hero:after{content:"";position:absolute;inset:auto -20% -70% -20%;height:180px;background:radial-gradient(ellipse,rgba(168,85,247,.12),transparent 65%);pointer-events:none}
+
+/* Norou Exercise Coach */
+.exercise-stage{position:relative;height:330px;overflow:hidden;background:linear-gradient(180deg,#111113 0%,#09090b 100%)}
+.exercise-grid{position:absolute;inset:0;opacity:.35;background-image:linear-gradient(rgba(168,85,247,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.12) 1px,transparent 1px);background-size:36px 36px;transform:perspective(450px) rotateX(58deg) scale(1.4);transform-origin:center bottom}
+.exercise-label{position:absolute;top:16px;left:18px;z-index:3;font-size:10px;font-weight:900;letter-spacing:.18em;color:#c99bf7}
+.exercise-play{position:absolute;right:16px;top:14px;z-index:5;width:42px;height:42px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(10,10,10,.72);color:#fff;font-weight:900;backdrop-filter:blur(10px)}
+.exercise-figure{position:absolute;left:50%;top:58%;width:150px;height:205px;transform:translate(-50%,-50%);filter:drop-shadow(0 16px 18px rgba(0,0,0,.45));}
+.figure-head{position:absolute;width:34px;height:34px;border-radius:50%;left:58px;top:4px;background:linear-gradient(145deg,#e7e7ea,#8d8d95);border:2px solid #fff4;z-index:4}
+.figure-torso{position:absolute;width:54px;height:92px;left:48px;top:35px;border-radius:28px 28px 18px 18px;background:linear-gradient(90deg,#c7c7cc,#66666f);transform-origin:50% 0;z-index:3}
+.figure-arm,.figure-leg{position:absolute;background:linear-gradient(90deg,#bfc0c5,#5f6068);border-radius:999px;transform-origin:top center;z-index:2}
+.figure-arm{width:13px;height:78px;top:43px}.figure-arm-left{left:43px;transform:rotate(20deg)}.figure-arm-right{left:94px;transform:rotate(-20deg)}
+.figure-leg{width:15px;height:82px;top:112px}.figure-leg-left{left:52px;transform:rotate(12deg)}.figure-leg-right{left:82px;transform:rotate(-12deg)}
+.figure-bar{position:absolute;width:130px;height:7px;left:10px;top:46px;border-radius:99px;background:#aaa;box-shadow:0 0 0 5px #222,0 0 18px #a855f744;opacity:0}
+.figure-bench{position:absolute;width:120px;height:14px;left:15px;top:120px;border-radius:7px;background:#444;box-shadow:0 0 0 2px #7774;opacity:0}
+.exercise-bench .figure-bar,.exercise-bench .figure-bench{opacity:1}
+.exercise-bench .figure-torso,.exercise-bench .figure-head{transform:rotate(90deg);transform-origin:50% 100%;}
+.exercise-bench.is-playing .figure-arm-left{animation:benchArm 1.8s ease-in-out infinite}.exercise-bench.is-playing .figure-arm-right{animation:benchArm 1.8s ease-in-out infinite}
+.exercise-squat.is-playing .figure-torso{animation:squatTorso 1.7s ease-in-out infinite}.exercise-squat.is-playing .figure-leg-left{animation:squatLeft 1.7s ease-in-out infinite}.exercise-squat.is-playing .figure-leg-right{animation:squatRight 1.7s ease-in-out infinite}
+.exercise-deadlift.is-playing .figure-torso{animation:hinge 1.9s ease-in-out infinite}.exercise-deadlift.is-playing .figure-leg-left{animation:hingeLeg 1.9s ease-in-out infinite}.exercise-deadlift.is-playing .figure-leg-right{animation:hingeLeg 1.9s ease-in-out infinite}
+.exercise-pushup.is-playing{animation:pushBody 1.8s ease-in-out infinite}.exercise-pushup .figure-torso{transform:rotate(72deg)}.exercise-pushup .figure-head{transform:rotate(72deg);transform-origin:50% 100%}
+.exercise-row.is-playing .figure-arm-right{animation:rowArm 1.6s ease-in-out infinite}.exercise-row.is-playing .figure-torso{animation:rowTorso 1.6s ease-in-out infinite}
+.exercise-lunge.is-playing .figure-leg-left{animation:lungeLeft 1.7s ease-in-out infinite}.exercise-lunge.is-playing .figure-leg-right{animation:lungeRight 1.7s ease-in-out infinite}
+.exercise-figure.is-paused *{animation-play-state:paused!important}
+@keyframes benchArm{0%,100%{transform:rotate(-20deg) translateY(0)}50%{transform:rotate(55deg) translateY(22px)}}
+@keyframes squatTorso{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(28px) rotate(5deg)}}
+@keyframes squatLeft{0%,100%{transform:rotate(12deg)}50%{transform:rotate(35deg)}}
+@keyframes squatRight{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(-35deg)}}
+@keyframes hinge{0%,100%{transform:rotate(0) translateY(0)}50%{transform:rotate(38deg) translateY(18px)}}
+@keyframes hingeLeg{0%,100%{transform:rotate(12deg)}50%{transform:rotate(25deg)}}
+@keyframes pushBody{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(18px)}}
+@keyframes rowArm{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(48deg) translateY(8px)}}
+@keyframes rowTorso{0%,100%{transform:rotate(0)}50%{transform:rotate(20deg)}}
+@keyframes lungeLeft{0%,100%{transform:rotate(12deg)}50%{transform:rotate(48deg) translateY(14px)}}
+@keyframes lungeRight{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(-5deg) translateY(8px)}}
+@media(prefers-reduced-motion:reduce){.exercise-figure.is-playing *,.exercise-figure.is-playing{animation:none!important}}
+
+/* Norou Exercise Coach Pro */
+.exercise-stage-pro{height:390px;background:radial-gradient(circle at 50% 38%,rgba(168,85,247,.12),transparent 40%),linear-gradient(180deg,#111113,#070708)}
+.coach-3d{position:absolute;left:50%;top:54%;width:310px;height:330px;transform:translate(-50%,-50%);perspective:900px;filter:drop-shadow(0 20px 25px rgba(0,0,0,.55))}
+.coach-perspective{height:100%;transform-style:preserve-3d;transition:transform .5s ease}
+.coach-view-front .coach-perspective{transform:rotateY(0deg)}
+.coach-view-side .coach-perspective{transform:rotateY(68deg)}
+.coach-view-angle .coach-perspective{transform:rotateY(-28deg) rotateX(2deg)}
+.coach-body{width:100%;height:100%;overflow:visible}
+.coach-shadow{fill:rgba(0,0,0,.45)}
+.coach-human{transform-origin:130px 170px}
+.coach-human .head,.coach-human .neck,.coach-human .torso,.coach-human .arm,.coach-human .leg,.coach-human .foot{fill:url(#skin);stroke:rgba(255,255,255,.35);stroke-width:1.5}
+.coach-human .torso{fill:url(#suit)}
+.coach-human .muscle{fill:rgba(192,132,252,.18);stroke:rgba(216,180,254,.25);stroke-width:1}
+.coach-human .muscle.chest,.coach-human .muscle.quads,.coach-human .muscle.core,.coach-human .muscle.triceps,.coach-human .muscle.back{fill:rgba(168,85,247,.65);filter:drop-shadow(0 0 7px rgba(168,85,247,.45))}
+.coach-equipment{opacity:.75;stroke:#999;fill:#333;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.coach-equipment .bench-surface{fill:#444;stroke:#aaa;stroke-width:2}.coach-equipment .bar{fill:#111;stroke:#aaa;stroke-width:2}
+.coach-arrows{fill:none;stroke:#d8b4fe;stroke-width:3;stroke-linecap:round;filter:drop-shadow(0 0 5px rgba(216,180,254,.5));opacity:.9}
+.movement-chip{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:7px 12px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(7,7,8,.72);backdrop-filter:blur(12px);font-size:11px;color:#ddd;white-space:nowrap}
+.movement-chip strong{color:#d8b4fe;font-size:15px}
+.coach-voice{width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);font-size:17px}
+.muscle-pill{border:1px solid rgba(168,85,247,.22);background:rgba(168,85,247,.1);color:#d8b4fe;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800}
+.exercise-view-switcher{position:absolute;bottom:12px;right:12px;z-index:5;display:flex;gap:4px;padding:4px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(7,7,8,.72);backdrop-filter:blur(12px)}
+.exercise-view-switcher button{padding:6px 9px;border-radius:8px;color:#888;font-size:10px;font-weight:800;text-transform:uppercase}.exercise-view-switcher button.active{background:rgba(168,85,247,.22);color:#e7d4fb}
+.coach-bench.is-playing .coach-human{animation:coachBenchBody 1.8s ease-in-out infinite}.coach-squat.is-playing .coach-human{animation:coachSquat 1.7s ease-in-out infinite}.coach-deadlift.is-playing .coach-human{animation:coachHinge 1.9s ease-in-out infinite}.coach-pushup.is-playing .coach-human{animation:coachPush 1.8s ease-in-out infinite}.coach-row.is-playing .coach-human{animation:coachRow 1.6s ease-in-out infinite}.coach-lunge.is-playing .coach-human{animation:coachLunge 1.7s ease-in-out infinite}
+.coach-3d.is-paused *{animation-play-state:paused!important}
+@keyframes coachBenchBody{0%,100%{transform:translateY(3px)}50%{transform:translateY(-7px)}}
+@keyframes coachSquat{0%,100%{transform:translateY(0) scaleY(1)}45%{transform:translateY(21px) scaleY(.92)}60%{transform:translateY(21px) scaleY(.92)}}
+@keyframes coachHinge{0%,100%{transform:rotateX(0deg) translateY(0)}45%,60%{transform:rotateX(14deg) translateY(12px)}}
+@keyframes coachPush{0%,100%{transform:translateY(0)}45%,60%{transform:translateY(18px)}}
+@keyframes coachRow{0%,100%{transform:rotateY(0)}45%,60%{transform:rotateY(-5deg) translateX(5px)}}
+@keyframes coachLunge{0%,100%{transform:translateX(0)}45%,60%{transform:translateX(-14px) translateY(12px)}}
+@media(max-width:480px){.exercise-stage-pro{height:350px}.coach-3d{transform:translate(-50%,-50%) scale(.88)}.coach-view-front .coach-perspective,.coach-view-side .coach-perspective,.coach-view-angle .coach-perspective{transform:none}.exercise-view-switcher{bottom:10px;right:10px}.movement-chip{left:42%;bottom:12px}}
+@media(prefers-reduced-motion:reduce){.coach-3d *,.coach-3d{animation:none!important;transition:none!important}}
+
+/* Exercise Coach Studio controls */
+.coach-control-bar{display:flex;gap:7px;align-items:center;padding:10px 12px;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025);overflow:auto}.coach-control-bar button{white-space:nowrap;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#aaa;border-radius:10px;padding:7px 10px;font-size:10px;font-weight:900}.coach-control-bar button.active{border-color:rgba(168,85,247,.45);background:rgba(168,85,247,.14);color:#e7d4fb}.coach-reps{margin-left:auto;white-space:nowrap;color:#777;font-size:9px;font-weight:900;letter-spacing:.12em}.coach-reps b{color:#fff;font-size:14px;margin-left:4px}.coach-3d{--coach-speed:1}.coach-3d .coach-human,.coach-3d .coach-arrows{animation-duration:calc(var(--coach-speed) * 1.8s)}.coach-3d.hide-muscles .muscle{opacity:0!important;filter:none!important}.coach-3d.hide-arrows .coach-arrows{opacity:0!important}.coach-3d.show-arrows .coach-arrows{animation:motionPulse 1s ease-in-out infinite}.coach-3d .coach-perspective{will-change:transform}.coach-3d:hover .coach-perspective{filter:brightness(1.08)}@keyframes motionPulse{0%,100%{opacity:.45}50%{opacity:1}}
+@media(max-width:480px){.coach-control-bar{gap:5px}.coach-control-bar button{padding:7px 8px}.coach-reps{margin-left:0}}
+.norou-state-listening .norou-holo-aura{animation-duration:.65s}.norou-state-listening .norou-holo-core{transform:translate(-50%,-50%) scale(1.12)}
+.norou-state-thinking .norou-holo-ring-a,.norou-state-thinking .norou-holo-ring-b,.norou-state-thinking .norou-holo-ring-c{animation-duration:1.4s}
+.norou-state-planning .norou-holo-particle{animation-duration:1s}.norou-state-executing .norou-holo-scanline{animation-duration:.55s}.norou-state-success .norou-holo-core-hot{animation-duration:.45s;transform:translate(-50%,-50%) scale(1.5)}
+.norou-state-offline .norou-holo-aura{filter:grayscale(1) blur(10px);opacity:.65}.norou-state-offline .norou-status-dot{background:#aaa;box-shadow:0 0 8px #aaa}
+
+/* NOROU REDESIGN — OS workspace */
+.norou-page-head{display:flex;align-items:center;justify-content:space-between;gap:16px}.norou-page-head h1{font-size:clamp(1.7rem,7vw,2.35rem);font-weight:950;letter-spacing:-.05em;line-height:1.05;margin-top:4px}.norou-page-head p{font-size:12px;color:#737373;margin-top:6px}.norou-eyebrow{font-size:9px;font-weight:900;letter-spacing:.19em;color:#737373}.norou-avatar{width:42px;height:42px;border-radius:14px;border:1px solid rgba(168,85,247,.28);background:linear-gradient(145deg,#2a1738,#111);color:#fff;font-weight:900;box-shadow:0 8px 30px rgba(0,0,0,.28)}
+.norou-command-bar{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid rgba(255,255,255,.09);background:rgba(18,18,22,.88);border-radius:18px;box-shadow:0 14px 40px rgba(0,0,0,.2);cursor:pointer}.norou-command-bar:active{transform:scale(.99)}.norou-command-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:radial-gradient(circle at 35% 30%,#d6f4ff,#8c65ff 32%,#2b123e 72%);box-shadow:0 0 24px rgba(118,177,255,.2);font-size:18px}.norou-command-bar kbd{font-size:9px;color:#777;border:1px solid #2c2c31;border-radius:7px;padding:4px 6px;background:#0d0d0f}
+.norou-ai-card{position:relative;overflow:hidden;min-height:220px;border:1px solid rgba(168,85,247,.18);border-radius:28px;padding:24px 20px;display:flex;align-items:center;justify-content:space-between;background:radial-gradient(circle at 78% 48%,rgba(110,190,255,.13),transparent 20%),radial-gradient(circle at 40% 20%,rgba(168,85,247,.16),transparent 40%),linear-gradient(145deg,#17111f,#09090d 68%);box-shadow:inset 0 1px rgba(255,255,255,.06),0 24px 60px rgba(0,0,0,.3)}.norou-ai-glow{position:absolute;width:260px;height:260px;right:-110px;top:-60px;border-radius:50%;background:rgba(118,177,255,.08);filter:blur(30px)}.norou-ai-copy{position:relative;z-index:2;max-width:58%}.norou-ai-copy h2{font-size:25px;font-weight:950;letter-spacing:-.045em;margin-top:12px}.norou-ai-copy p{font-size:12px;line-height:1.55;color:#85858c;margin-top:7px}.norou-live-pill{display:inline-flex;align-items:center;gap:6px;font-size:8px;font-weight:900;letter-spacing:.16em;color:#a9e7ff}.norou-live-pill i{width:6px;height:6px;border-radius:50%;background:#75d7ff;box-shadow:0 0 12px #75d7ff}.norou-ai-actions{display:flex;gap:8px;margin-top:16px}.norou-ai-actions button,.norou-small-action{border:1px solid rgba(168,85,247,.25);border-radius:11px;background:rgba(255,255,255,.05);color:#eee;padding:8px 11px;font-size:10px;font-weight:800}.norou-ai-actions button:first-child,.norou-small-action{background:linear-gradient(135deg,#9d4edd,#6d4cff);border-color:transparent}.norou-ai-card .norou-holo{transform:scale(.82);margin-right:-10px}
+.norou-bento-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:10px}.norou-bento{min-height:126px;padding:15px;border:1px solid rgba(255,255,255,.07);border-radius:20px;background:linear-gradient(145deg,#171719,#101012);text-align:left;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;gap:4px}.norou-bento:active,.norou-quick:active{transform:scale(.985)}.norou-bento-primary{grid-row:span 2;min-height:262px;background:radial-gradient(circle at 85% 20%,rgba(168,85,247,.14),transparent 34%),linear-gradient(145deg,#1a1520,#0e0e11)}.norou-bento strong{font-size:30px;letter-spacing:-.05em}.norou-bento span:not(.norou-bento-icon):not(.norou-bento-label){font-size:10px;color:#74747b}.norou-bento-label{font-size:9px;color:#9f8bb2;font-weight:900;letter-spacing:.16em}.norou-bento-icon{font-size:17px;color:#b9a2ff;margin-bottom:auto}.norou-bento .h-2{margin-top:12px}
+.norou-next-card{background:linear-gradient(145deg,#17171a,#101012);border-color:rgba(168,85,247,.14)}.norou-now-ring{width:50px;height:50px;display:grid;place-items:center;border-radius:16px;background:radial-gradient(circle,#6d4cff22,#1a1424);border:1px solid #a855f733;box-shadow:inset 0 0 18px #a855f711}.norou-now-ring span{font-size:24px}.norou-link{font-size:10px;font-weight:800;color:#a88bd1}.norou-quick{display:flex;align-items:center;gap:10px;padding:13px;border-radius:17px;border:1px solid rgba(255,255,255,.07);background:#121214;text-align:left}.norou-quick>span{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:#a855f714;color:#c6a8ff;font-size:19px}.norou-quick strong{display:block;font-size:11px;color:#eee}.norou-quick small{display:block;font-size:9px;color:#68686f;margin-top:2px}.norou-insight{border-color:rgba(80,170,255,.15);background:linear-gradient(145deg,#111a21,#0e1012)}.norou-insight p{margin-top:8px;color:#c8d1d8;font-size:12px;line-height:1.6}.norou-quote{background:linear-gradient(145deg,#17131e,#0e0e11);border-color:rgba(168,85,247,.14)}.norou-quote p{margin-top:8px;font-size:13px;line-height:1.55;color:#d7d0dd}
+.norou-bottom-nav{background:rgba(9,9,11,.88);border-top:1px solid rgba(255,255,255,.07);backdrop-filter:blur(24px);padding-top:5px}.norou-nav-item{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px 7px;color:#56565e;transition:color .2s,transform .2s}.norou-nav-item span{font-size:19px;line-height:1;font-weight:800}.norou-nav-item small{font-size:8px;font-weight:800;letter-spacing:.03em}.norou-nav-item.active{color:#c4a7ff}.norou-nav-item.active:before{content:"";position:absolute;top:-6px;width:26px;height:2px;border-radius:9px;background:#a855f7;box-shadow:0 0 14px #a855f7}.norou-nav-item:active{transform:translateY(1px)}
+@media(max-width:430px){.norou-ai-card{min-height:235px;padding:20px 15px}.norou-ai-copy{max-width:62%}.norou-ai-copy h2{font-size:22px}.norou-ai-card .norou-holo{transform:scale(.68);margin-right:-28px}.norou-bento strong{font-size:26px}}
+
+
+/* NOROU MONEY — local 50/30/20 workspace */
+.norou-money-income{min-width:118px;padding:9px 12px;border:1px solid rgba(168,85,247,.2);border-radius:15px;background:linear-gradient(145deg,#17121d,#0e0e11);text-align:right}.norou-money-income small{display:block;color:#676770;font-size:7px;font-weight:900;letter-spacing:.14em}.norou-money-income strong{display:block;color:#fff;font-size:15px;font-weight:950;margin-top:2px}.norou-money-hero{background:radial-gradient(circle at 88% 50%,rgba(168,85,247,.08),transparent 24%),linear-gradient(145deg,#18131f,#0d0d10);border-color:rgba(168,85,247,.16)}.norou-money-left{font-size:35px;line-height:1;font-weight:950;letter-spacing:-.055em;color:#fff;margin-top:7px}.norou-money-donut{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;box-shadow:0 0 35px rgba(168,85,247,.12)}.norou-money-donut>div{width:62px;height:62px;border-radius:50%;background:#101014;display:flex;flex-direction:column;align-items:center;justify-content:center}.norou-money-donut strong{font-size:10px;color:#fff}.norou-money-donut small{font-size:6px;color:#666;letter-spacing:.14em;margin-top:3px}.norou-money-bucket{min-width:0}.norou-money-bucket>span{font-size:13px;color:#bca6ff}.norou-money-bucket small{display:block;font-size:7px;font-weight:900;letter-spacing:.13em;color:#666;margin-top:9px}.norou-money-bucket strong{display:block;font-size:16px;color:#fff;margin-top:3px}.norou-money-bucket em{display:block;font-size:8px;color:#555;font-style:normal;margin-top:2px}.norou-rule-pill{padding:4px 7px;border-radius:8px;font-size:9px;font-weight:900}.norou-rule-pill.ok{background:rgba(168,85,247,.1);color:#b88cff}.norou-rule-pill.warn{background:rgba(251,191,36,.1);color:#c99bf7}.norou-money-add{padding:8px 12px;border-radius:11px;background:#a855f7;color:#fff;font-size:10px;font-weight:900}.norou-money-cat{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:rgba(255,255,255,.05);font-size:14px}.norou-money-cat.needs{color:#c99bf7}.norou-money-cat.wants{color:#c99bf7}.norou-money-cat.savings{color:#b88cff}
+@media(max-width:430px){.norou-money-income{min-width:104px}.norou-money-left{font-size:30px}.norou-money-donut{width:80px;height:80px}.norou-money-donut>div{width:54px;height:54px}.norou-nav-item small{font-size:7px}.norou-nav-item span{font-size:17px}}
+
+/* NOROU MONEY v14 — finance cockpit polish */
+.norou-money-month{display:grid;grid-template-columns:36px 1fr 36px auto;align-items:center;gap:8px;background:#111114;border-color:rgba(255,255,255,.07)}
+.norou-money-month>button{height:34px;border-radius:10px;background:rgba(255,255,255,.05);color:#aaa;font-size:20px;display:grid;place-items:center}.norou-money-month>button:active{transform:scale(.95)}
+.norou-money-month>div{text-align:center}.norou-money-month>div strong{display:block;font-size:13px;color:#fff;margin-top:3px}.norou-money-today{padding:0 10px!important;font-size:9px!important;font-weight:900!important;color:#c4a7ff!important;border:1px solid rgba(168,85,247,.16)}
+.norou-money-left.negative{color:#fb7185}.norou-money-insight-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.norou-money-insight-grid .rounded-2xl{background:linear-gradient(145deg,#151518,#101012);border-color:rgba(255,255,255,.06)}.norou-money-insight-grid strong{display:block;font-size:18px;letter-spacing:-.04em;color:#fff;margin-top:7px}.norou-money-insight-grid span{display:block;font-size:8px;color:#666;margin-top:2px}.norou-money-kicker{font-size:7px;font-weight:900;letter-spacing:.13em;color:#666}
+.norou-money-edit{padding:6px 9px;border:1px solid rgba(168,85,247,.2);border-radius:9px;color:#c4a7ff;font-size:9px;font-weight:900;background:rgba(168,85,247,.07)}
+.norou-money-search{display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);border-radius:12px;padding:9px 11px}.norou-money-search span{color:#666;font-size:15px}.norou-money-search input{width:100%;background:transparent;outline:none;color:#fff;font-size:11px}.norou-money-search input::placeholder{color:#555}.norou-money-filter{flex:0 0 auto;padding:7px 10px;border-radius:9px;background:rgba(255,255,255,.04);color:#666;font-size:9px;font-weight:900}.norou-money-filter.active{background:rgba(168,85,247,.13);color:#c9b5ff;border:1px solid rgba(168,85,247,.16)}.norou-money-note{background:linear-gradient(145deg,#131116,#101012);border-color:rgba(168,85,247,.1)}
+@media(max-width:430px){.norou-money-month{grid-template-columns:32px 1fr 32px auto}.norou-money-today{padding:0 7px!important}.norou-money-insight-grid{gap:6px}.norou-money-insight-grid .p-4{padding:11px}.norou-money-insight-grid strong{font-size:15px}}

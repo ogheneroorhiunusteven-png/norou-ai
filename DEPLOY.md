@@ -10,7 +10,7 @@
 ```bash
 cd level-up
 chmod +x scripts/deploy-and-build.sh
-./scripts/deploy-and-build.sh          # creates repo "level-up"
+./scripts/deploy-and-build.sh          # creates repo "norou-ai"
 # or: ./scripts/deploy-and-build.sh my-repo-name
 ```
 
