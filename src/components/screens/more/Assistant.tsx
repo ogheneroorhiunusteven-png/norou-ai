@@ -133,7 +133,7 @@ export function Assistant() {
           disabled={sending}
         />
         <button type="button" onClick={() => { if (voice) { try { recognitionRef.current?.stop?.(); } catch {} setVoice(false); } else { setVoiceChat(true); startVoice(); } }} className={`min-h-11 min-w-11 rounded-xl px-3 py-2 text-sm ${voice ? "bg-red-500/20 text-red-300" : voiceChat ? "bg-[#a855f7]/20 text-[#d8b4fe]" : "bg-[#2a2a2a] text-neutral-300"}`}>{voice ? "Listening…" : voiceChat ? "🎙 On" : "🎙"}</button>
-        <Button onClick={send} disabled={sending || !input.trim()}>Send</Button>
+        <Button onClick={() => send()} disabled={sending || !input.trim()}>Send</Button>
       </div>
     </div>
   );
