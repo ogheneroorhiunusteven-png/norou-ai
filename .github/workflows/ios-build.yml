@@ -63,12 +63,12 @@ jobs:
           mkdir -p build/Payload
           cp -R build/App.xcarchive/Products/Applications/App.app build/Payload/
           cd build
-          zip -qr LevelUp-unsigned.ipa Payload
-          ls -lh LevelUp-unsigned.ipa
+          zip -qr NovaAI-unsigned.ipa Payload
+          ls -lh NovaAI-unsigned.ipa
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
-          name: LevelUp-unsigned-ipa
-          path: ios/App/build/LevelUp-unsigned.ipa
+          name: NovaAI-unsigned-ipa
+          path: ios/App/build/NovaAI-unsigned.ipa
           retention-days: 30

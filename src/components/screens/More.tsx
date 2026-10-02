@@ -35,9 +35,10 @@ const TITLES: Record<Sub, string> = { menu: "Hub", norouos: "Nova OS", assistant
 
 export function More() {
   const { state } = useStore(); const [sub, setSub] = useState<Sub>("menu"); const [search, setSearch] = useState("");
+  // Hooks must run before the early return below, otherwise opening a Hub item changes the hook count and crashes.
+  const filteredItems = useMemo(() => { const q = search.trim().toLowerCase(); return q ? ITEMS.filter((it) => `${it.label} ${it.desc}`.toLowerCase().includes(q)) : ITEMS; }, [search]);
   if (sub !== "menu") return <div className="space-y-4 pb-4"><header className="flex items-center gap-3 pt-1"><button onClick={() => setSub("menu")} className="norou-hub-back">‹</button><div><div className="norou-eyebrow">NOVA HUB</div><h1 className="text-2xl font-black text-white">{TITLES[sub]}</h1></div></header>{sub === "norouos" && <NorouOS />}{sub === "assistant" && <Assistant />}{sub === "calendar" && <Calendar />}{sub === "memory" && <Memory />}{sub === "goals" && <Goals />}{sub === "tasks" && <Tasks />}{sub === "notes" && <Notes />}{sub === "alarms" && <Alarms />}{sub === "pomodoro" && <Pomodoro />}{sub === "exercise" && <ExercisePlans />}{sub === "analytics" && <Analytics />}{sub === "settings" && <Settings />}</div>;
   const name = state.profile.name || "there";
-  const filteredItems = useMemo(() => { const q = search.trim().toLowerCase(); return q ? ITEMS.filter((it) => `${it.label} ${it.desc}`.toLowerCase().includes(q)) : ITEMS; }, [search]);
   return <div className="space-y-4 pb-4">
     <header className="norou-page-head pt-1"><div><div className="norou-eyebrow">NOVA HUB</div><h1>Hub</h1><p>Your control room, {name}. Everything else lives here.</p></div><div className="norou-hub-mark">✦</div></header>
     <Card className="norou-hub-hero p-5"><div className="norou-eyebrow">CONTROL ROOM</div><div className="flex items-end justify-between gap-4 mt-2"><div><strong>One place.</strong><p>Open Nova OS, talk to the assistant, manage memory, or jump into a tool.</p></div><div className="norou-hub-orbit">N</div></div><button onClick={() => setSub("norouos")} className="norou-small-action mt-4">Open Nova OS</button></Card>

@@ -135,6 +135,7 @@ export function Tasks() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => toggleTask(t.id)}
+                  aria-label={t.completed ? "Mark task as not done" : "Mark task as done"}
                   className={`h-6 w-6 shrink-0 rounded-full border-2 flex items-center justify-center transition-all ${
                     t.completed ? "bg-[#a855f7] border-[#a855f7]" : "border-white/25 hover:border-[#a855f7]"
                   }`}

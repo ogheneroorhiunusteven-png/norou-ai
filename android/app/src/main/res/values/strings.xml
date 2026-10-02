@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Nova AI</string>
     <string name="title_activity_main">Nova AI</string>
-    <string name="package_name">com.yourname.levelup</string>
-    <string name="custom_url_scheme">com.yourname.levelup</string>
+    <string name="package_name">com.norouai.app</string>
+    <string name="custom_url_scheme">com.norouai.app</string>
 </resources>

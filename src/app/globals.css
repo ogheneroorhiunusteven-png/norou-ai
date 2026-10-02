@@ -461,3 +461,88 @@ button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 @media (pointer: coarse) {
   button, [role="button"], select { min-height:44px; }
 }
+
+/* Reference-accurate Exercise Coach model surface */
+.reference-stage-exact{background:#0b0a12!important;min-height:360px;display:grid;place-items:center;position:relative;overflow:hidden}
+.reference-model{position:relative;width:min(92vw,720px);height:350px;display:grid;place-items:center;isolation:isolate}
+.reference-model img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;user-select:none;-webkit-user-drag:none;image-rendering:auto}
+.reference-model.is-playing img{animation:referenceModelFloat 1.8s ease-in-out infinite}
+.reference-model.is-paused img{animation:none}
+.reference-model.hide-muscles .reference-muscle-glow{opacity:0}
+.reference-muscle-glow{position:absolute;inset:18% 20%;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.12),transparent 66%);pointer-events:none;mix-blend-mode:screen;transition:opacity .2s}
+.reference-motion-arrow{position:absolute;right:12%;top:42%;font-size:38px;font-weight:950;color:#a855f7;text-shadow:0 0 18px rgba(168,85,247,.6);animation:referenceArrowPulse 1s ease-in-out infinite}
+.reference-phase-chip{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);padding:7px 12px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(8,7,13,.86);backdrop-filter:blur(10px);color:#fff;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.reference-view-note{position:absolute;left:14px;bottom:12px;color:#777;font-size:8px;font-weight:900;letter-spacing:.16em}
+@keyframes referenceModelFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes referenceArrowPulse{0%,100%{opacity:.45;transform:translateY(0)}50%{opacity:1;transform:translateY(4px)}}
+@media(max-width:600px){.reference-stage-exact{min-height:300px}.reference-model{height:292px;width:100%}.reference-motion-arrow{right:8%;font-size:30px}.reference-view-note{font-size:7px}}
+@media(prefers-reduced-motion:reduce){.reference-model.is-playing img,.reference-motion-arrow{animation:none!important}}
+
+/* Nova Exercise Coach — Motion Lab v26 */
+.exercise-reference-stage.reference-stage-exact{background:radial-gradient(circle at 50% 30%,#21132e 0,#0b0a12 46%,#06060a 100%)!important;min-height:470px}
+.exercise-reference-status{position:absolute;top:14px;left:16px;z-index:4;display:flex;align-items:center;gap:10px;padding:8px 11px;border:1px solid #30263a;border-radius:999px;background:#0b0a12d9;backdrop-filter:blur(12px);color:#e9d8f6;font-size:9px;font-weight:950;letter-spacing:.12em}.exercise-reference-status span:before{content:"";display:inline-block;width:7px;height:7px;margin-right:7px;border-radius:50%;background:#a855f7;box-shadow:0 0 12px #a855f7}.exercise-reference-status small{color:#71677b;font-size:7px;letter-spacing:.1em}
+.reference-model{width:min(94vw,760px);height:405px}.coach-avatar{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 22px 24px #0009)}.avatar-motion{transition:transform .65s cubic-bezier(.2,.75,.25,1)}.coach-avatar.is-playing .avatar-motion{animation:coachBreath 2.4s ease-in-out infinite}.coach-avatar text{font-family:inherit}.reference-motion-arrow{right:7%;top:44%;font-size:42px;z-index:3}.reference-phase-chip{bottom:18px;background:#100d15e8;border-color:#3a2b45;box-shadow:0 0 28px #a855f726}.reference-mini-legend{position:absolute;right:14px;top:14px;display:flex;gap:8px;padding:7px 9px;border:1px solid #28212e;border-radius:10px;background:#0b0a12c9;color:#85808c;font-size:7px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.reference-mini-legend span{display:flex;gap:4px;align-items:center}.reference-mini-legend i{display:block;width:6px;height:6px;border-radius:50%;background:#52515a}.reference-mini-legend i.primary{background:#c084fc;box-shadow:0 0 7px #c084fc}
+.exercise-safety-card{margin-top:13px;padding:12px 13px;border:1px solid #3a2c43;border-radius:14px;background:linear-gradient(180deg,#16101b,#0f0d13);color:#89828f;font-size:9px;line-height:1.55}.exercise-safety-card b{display:block;margin-bottom:4px;color:#d8c3e5;font-size:9px;text-transform:uppercase;letter-spacing:.13em}.exercise-safety-card p{margin:0}
+@keyframes coachBreath{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
+@media(max-width:600px){.exercise-reference-stage.reference-stage-exact{min-height:390px}.reference-model{height:330px}.exercise-reference-status{left:10px;top:10px;max-width:calc(100% - 20px)}.exercise-reference-status small{display:none}.reference-mini-legend{top:auto;bottom:12px;right:10px}.reference-phase-chip{bottom:10px}.reference-motion-arrow{font-size:31px;right:5%}}
+@media(prefers-reduced-motion:reduce){.avatar-motion,.coach-avatar.is-playing .avatar-motion{animation:none!important;transition:none!important}}
+
+/* Nova Exercise Coach — Final precision pass */
+.motion-lab-badge{position:absolute;right:16px;top:14px;z-index:4;display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding:8px 10px;border:1px solid #3a2b47;border-radius:12px;background:#0b0a12d9;backdrop-filter:blur(12px);text-transform:uppercase;letter-spacing:.1em}
+.motion-lab-badge span{font-size:8px;font-weight:950;color:#e7d5f3}.motion-lab-badge small{font-size:6px;font-weight:900;color:#a855f7}
+.reference-frame-controls{position:absolute;left:50%;bottom:48px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:10px;padding:6px;border:1px solid #33263c;border-radius:14px;background:#0a0910e8;backdrop-filter:blur(12px)}
+.reference-frame-controls button{width:34px;height:34px;border:0;border-radius:10px;background:#18131e;color:#fff;font-size:24px;line-height:1;cursor:pointer}.reference-frame-controls button:active{transform:scale(.96)}
+.reference-frame-controls div{min-width:82px;text-align:center}.reference-frame-controls b{display:block;color:#fff;font-size:9px;letter-spacing:.08em}.reference-frame-controls span{display:block;margin-top:2px;color:#8d8394;font-size:7px;text-transform:uppercase;letter-spacing:.08em}
+.exercise-phase-rail{display:flex;gap:6px;overflow-x:auto;padding:9px 0 2px;scrollbar-width:none}.exercise-phase-rail::-webkit-scrollbar{display:none}.exercise-phase-rail button{flex:1;min-width:82px;min-height:38px;border:1px solid #26202c;border-radius:11px;background:#100e14;color:#77717f;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.exercise-phase-rail button i{display:block;width:5px;height:5px;border-radius:50%;margin:0 auto 5px;background:#3e3945}.exercise-phase-rail button.active{border-color:#7b3fac;background:#1b1124;color:#eee4f5;box-shadow:inset 0 0 0 1px #a855f733}.exercise-phase-rail button.active i{background:#c084fc;box-shadow:0 0 8px #c084fc}
+.exercise-accuracy-card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding:10px 12px;border:1px solid #29212f;border-radius:12px;background:#0d0b11}.exercise-accuracy-card b{display:block;color:#cdb6da;font-size:8px;text-transform:uppercase;letter-spacing:.12em}.exercise-accuracy-card span{display:block;color:#716a76;font-size:8px;margin-top:3px}.exercise-accuracy-card strong{flex:0 0 auto;color:#8f65a8;font-size:7px;letter-spacing:.1em}
+@media(max-width:600px){.motion-lab-badge{right:10px;top:10px}.reference-frame-controls{bottom:45px}.exercise-phase-rail button{min-width:76px}.exercise-accuracy-card{align-items:flex-start;flex-direction:column;gap:5px}.exercise-accuracy-card strong{font-size:6px}}
+
+/* ---------- Exercise Coach (3D) ---------- */
+.cc-root { color: #fff; }
+.cc-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 4px 12px; }
+.cc-head h2 { font-size: 1.35rem; font-weight: 900; line-height: 1.15; }
+.cc-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: .16em; color: #b693f0; text-transform: uppercase; }
+.cc-card { background: #0d0b14; border: 1px solid rgba(255,255,255,.08); border-radius: 22px; overflow: hidden; margin-bottom: 14px; }
+.cc-stage { position: relative; width: 100%; height: min(112vw, 560px); background: radial-gradient(120% 90% at 50% 20%, #1b1430 0%, #0a0910 62%); touch-action: none; }
+.cc-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
+.cc-canvas:active { cursor: grabbing; }
+.cc-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.cc-nogl { position: absolute; left: 12px; right: 12px; bottom: 44px; font-size: 11px; color: #c9bdf0; text-align: center; }
+.cc-status { position: absolute; top: 12px; left: 12px; display: flex; gap: 8px; align-items: center; background: rgba(10,9,16,.78); border: 1px solid rgba(255,255,255,.1); border-radius: 999px; padding: 6px 12px; font-size: 11px; }
+.cc-status span { font-weight: 800; letter-spacing: .12em; color: #8d8a99; } .cc-status span.on { color: #b068ff; }
+.cc-status b { font-weight: 800; }
+.cc-count { position: absolute; top: 12px; right: 12px; text-align: right; background: rgba(10,9,16,.78); border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 6px 12px; }
+.cc-count small { display: block; font-size: 9px; letter-spacing: .14em; color: #8d8a99; font-weight: 800; } .cc-count b { font-size: 18px; font-weight: 900; }
+.cc-fab { position: absolute; right: 12px; bottom: 12px; width: 48px; height: 48px; border-radius: 50%; background: #a855f7; color: #fff; font-size: 18px; font-weight: 900; box-shadow: 0 6px 20px rgba(168,85,247,.45); }
+.cc-hint { position: absolute; left: 14px; bottom: 16px; font-size: 10px; color: #6f6b7c; letter-spacing: .06em; }
+.cc-scrub { display: flex; align-items: center; gap: 8px; padding: 12px 14px 4px; }
+.cc-scrub button { width: 40px; height: 40px; border-radius: 12px; background: #1a1624; font-size: 20px; font-weight: 800; color: #d9c8f7; flex: none; }
+.cc-scrub input { flex: 1; accent-color: #a855f7; height: 40px; }
+.cc-rail { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 4px 14px 10px; }
+.cc-rail button { min-height: 44px; border-radius: 12px; background: #15121e; font-size: 12px; font-weight: 700; color: #a29db1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.cc-rail button i { width: 18px; height: 3px; border-radius: 2px; background: #3a3450; }
+.cc-rail button.active { color: #fff; background: #241a3d; } .cc-rail button.active i { background: #b068ff; }
+.cc-controls { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 12px; }
+.cc-controls button { min-height: 40px; padding: 0 14px; border-radius: 999px; background: #1a1624; color: #cfc8de; font-size: 12px; font-weight: 700; }
+.cc-controls button.active { background: #a855f7; color: #fff; }
+.cc-cuebox { margin: 0 14px 12px; padding: 12px 14px; border-radius: 16px; background: #15121e; border-left: 3px solid #a855f7; }
+.cc-cuebox small { font-size: 10px; letter-spacing: .14em; color: #b693f0; font-weight: 800; text-transform: uppercase; } .cc-cuebox p { margin-top: 4px; font-size: 14px; line-height: 1.45; color: #ece6f8; }
+.cc-angles { display: flex; gap: 8px; padding: 0 14px 14px; }
+.cc-angles div { flex: 1; background: #15121e; border-radius: 14px; padding: 8px 10px; } .cc-angles small { display: block; font-size: 10px; color: #8d8a99; } .cc-angles b { font-size: 18px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.cc-info { padding: 16px 16px 18px; }
+.cc-titlerow { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.cc-titlerow h1 { font-size: 1.45rem; font-weight: 900; line-height: 1.15; } .cc-cat { font-size: 12px; color: #8d8a99; }
+.cc-voice { width: 44px; height: 44px; border-radius: 14px; background: #1a1624; font-size: 18px; flex: none; }
+.cc-pills { display: flex; gap: 8px; margin: 12px 0; } .cc-pills span { padding: 7px 14px; border-radius: 999px; background: #17131f; border: 1px solid rgba(255,255,255,.1); font-size: 12px; font-weight: 700; }
+.cc-targets { display: flex; gap: 14px; align-items: center; padding: 12px; border-radius: 16px; background: #100d18; margin-bottom: 14px; }
+.cc-maps { display: flex; gap: 6px; flex: none; } .cc-maps img { width: 78px; height: 130px; object-fit: contain; border-radius: 12px; background: #0a0910; border: 1px solid rgba(255,255,255,.08); }
+.cc-map-empty { font-size: 11px; color: #6f6b7c; }
+.cc-targets ul { display: grid; gap: 10px; font-size: 13px; } .cc-targets li { display: flex; gap: 8px; align-items: flex-start; } .cc-targets li i { width: 12px; height: 12px; border-radius: 50%; margin-top: 3px; flex: none; }
+.cc-tabs { display: flex; gap: 6px; margin-bottom: 10px; } .cc-tabs button { flex: 1; min-height: 42px; border-radius: 12px; background: #15121e; font-weight: 800; font-size: 13px; color: #a29db1; } .cc-tabs button.active { background: #a855f7; color: #fff; }
+.cc-list h3 { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #8d8a99; margin: 12px 0 6px; }
+.cc-list p { display: flex; gap: 10px; font-size: 14px; line-height: 1.45; padding: 4px 0; } .cc-list p span { color: #b068ff; font-weight: 900; } .cc-list p.warn span { color: #f0a35b; }
+.cc-step { width: 100%; display: flex; gap: 12px; text-align: left; padding: 10px; border-radius: 14px; background: #15121e; margin-bottom: 6px; } .cc-step span { width: 26px; height: 26px; border-radius: 50%; background: #2a2140; display: grid; place-items: center; font-size: 12px; font-weight: 800; flex: none; } .cc-step.current { outline: 1px solid #a855f7; } .cc-step p { padding: 0; font-size: 14px; }
+.cc-safety { margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: #17120f; border: 1px solid rgba(240,163,91,.25); } .cc-safety b { font-size: 12px; color: #f0a35b; } .cc-safety p { margin-top: 4px; font-size: 12px; line-height: 1.5; color: #b5aebf; }
+.cc-library { padding: 4px 2px; } .cc-libgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+.cc-libgrid button { text-align: left; padding: 12px; min-height: 56px; border-radius: 14px; background: #15121e; border: 1px solid transparent; } .cc-libgrid button span { display: block; font-size: 13px; font-weight: 800; } .cc-libgrid button small { font-size: 11px; color: #8d8a99; } .cc-libgrid button.active { border-color: #a855f7; background: #1d1530; }
+@media (prefers-reduced-motion: reduce) { .cc-fab { transition: none; } }

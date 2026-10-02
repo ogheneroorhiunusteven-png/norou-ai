@@ -58,12 +58,12 @@ export async function setRoutingMode(mode: RoutingMode): Promise<void> {
 }
 
 /** Free-only mode prevents Nova from intentionally using paid cloud providers.
- * It is enabled by default. Local commands remain available without any API. */
+ * It is opt-in. Local commands remain available without any API. */
 export async function getFreeOnly(): Promise<boolean> {
   try {
     const res = await Preferences.get({ key: FREE_ONLY_KEY });
-    return res.value === null ? true : res.value === "true";
-  } catch { return true; }
+    return res.value === null ? false : res.value === "true";
+  } catch { return false; }
 }
 
 export async function setFreeOnly(enabled: boolean): Promise<void> {

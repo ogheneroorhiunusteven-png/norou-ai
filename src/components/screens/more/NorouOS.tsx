@@ -170,7 +170,7 @@ export function NorouOS() {
     <div className="space-y-4">
       <Card className="norou-os-hero p-5">
         <div className="flex items-center gap-4">
-          <NorouOrb size="compact" active={holoState !== "idle"} />
+          <NorouOrb size="compact" active={holoState !== "idle"} onClick={() => window.dispatchEvent(new CustomEvent("norou:open"))} />
           <div className="min-w-0 flex-1"><div className="text-[10px] font-black tracking-[.25em] text-[#b88cff]">{statusText[holoState]}</div><h2 className="text-2xl font-black text-white mt-1">Nova OS</h2><p className="text-xs text-neutral-400 mt-1">Your context-aware personal AI operating layer.</p></div>
           <div className="text-right"><div className="text-xl font-black text-white">Lv {li.level}</div><div className="text-[10px] text-neutral-500">{state.xp} XP</div></div>
         </div>

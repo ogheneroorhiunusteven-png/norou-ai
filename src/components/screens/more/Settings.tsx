@@ -38,7 +38,7 @@ export function Settings() {
   const [savingUrl, setSavingUrl] = useState(false);
   const [modelProfile, setModelProfileState] = useState<ModelProfileId>("auto");
   const [routingMode, setRoutingModeState] = useState<RoutingMode>("auto");
-  const [freeOnly, setFreeOnlyState] = useState(true);
+  const [freeOnly, setFreeOnlyState] = useState(false);
 
   useEffect(() => {
     void getBackendUrl().then((url) => setBackendUrlState(url ?? ""));
@@ -176,7 +176,7 @@ export function Settings() {
         <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-3 mb-3">
           <div className="pr-3">
             <div className="text-sm font-semibold text-white">🆓 Free-only mode</div>
-            <div className="text-[11px] text-neutral-400">Blocks paid cloud providers. Enabled by default.</div>
+            <div className="text-[11px] text-neutral-400">Blocks paid cloud providers. Off by default so Gemini can respond.</div>
           </div>
           <Toggle on={freeOnly} onChange={async () => {
             const next = !freeOnly;

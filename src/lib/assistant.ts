@@ -6,13 +6,14 @@ import { extractActions, parseLocalCommand, type NorouAction } from "./actions";
 import { getFreeOnly, getModelProfile, getRoutingMode } from "./modelHub";
 
 const BACKEND_URL_KEY = "assistant_backend_url";
+const DEFAULT_BACKEND_URL = "https://ai-backend-rust-omega.vercel.app";
 
 export async function getBackendUrl(): Promise<string | null> {
   try {
     const res = await Preferences.get({ key: BACKEND_URL_KEY });
-    return res.value || null;
+    return res.value?.trim().replace(/\/+$/, "") || DEFAULT_BACKEND_URL;
   } catch {
-    return null;
+    return DEFAULT_BACKEND_URL;
   }
 }
 

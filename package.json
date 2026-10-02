@@ -9,7 +9,8 @@
     "ios:sync": "next build && npx cap sync ios",
     "ios:open": "npx cap open ios",
     "android:sync": "next build && npx cap sync android",
-    "android:open": "npx cap open android"
+    "android:open": "npx cap open android",
+    "verify:coach": "npx tsx scripts/verify-coach.ts"
   },
   "dependencies": {
     "@capacitor-mlkit/barcode-scanning": "^6.2.0",

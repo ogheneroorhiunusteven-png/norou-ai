@@ -42,3 +42,6 @@ The v8 source was checked from the complete v7 ZIP. A clean `npm ci` could not c
 - Recognition is aborted cleanly when the Command Centre/Assistant closes.
 - Added iOS NSMicrophoneUsageDescription permission for native builds.
 - Unsupported WebView/browser speech recognition now reports a clear fallback instead of silently failing.
+
+### Final Exercise Coach precision pass
+Added phase-lock controls, phase-by-phase stepping, direct phase timeline, study-speed controls, view switching, target overlays, and stronger safety/accuracy boundaries.

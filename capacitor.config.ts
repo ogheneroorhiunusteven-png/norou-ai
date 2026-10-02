@@ -2,9 +2,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
 import { KeyboardResize } from "@capacitor/keyboard";
 
 const config: CapacitorConfig = {
-  // Reverse-DNS bundle ID. Still a placeholder — change to your own
-  // domain/name before creating the real App ID in Apple/Google's
-  // developer consoles (it must be globally unique).
+  // Shared Android/iOS bundle ID used by this Nova AI build.
   appId: "com.norouai.app",
   appName: "Nova AI",
   // Next.js static export lands in ./out

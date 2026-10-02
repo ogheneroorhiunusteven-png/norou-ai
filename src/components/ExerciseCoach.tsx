@@ -1,120 +1,249 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Card, Button } from "./ui";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button } from "./ui";
+import { CoachGL } from "@/lib/coach3d/gl";
+import { assemble } from "@/lib/coach3d/rig";
+import { buildBody, type Roles } from "@/lib/coach3d/body";
+import { M, cyl, sphere, type Prim } from "@/lib/coach3d/shapes";
+import { EXERCISES, EX_BY_KEY, loopTime, sample, segEnd, segStart, type Exercise, type ExerciseKey, type TargetRole } from "@/lib/coach3d/exercises";
+import type { V3 } from "@/lib/coach3d/math";
 
-export type ExerciseKey = "bench" | "squat" | "deadlift" | "pushup" | "row" | "lunge";
-type View = "front" | "side" | "angle";
+export type { ExerciseKey };
+type CoachView = "front" | "angle" | "side";
+const FOV = 0.6;
+const YAW: Record<CoachView, (e: Exercise) => number> = { front: () => 0.12, angle: (e) => e.cam.yaw, side: (e) => (e.cam.yaw >= 0 ? Math.PI / 2 : -Math.PI / 2) };
+const ROLE_COLOR: Record<TargetRole, string> = { Primary: "#b068ff", Secondary: "#8c52e8", Tertiary: "#c9bdf0" };
 
-type Target = { name: string; role: "Primary" | "Secondary" | "Stabilizer"; zone: string };
-type Exercise = {
-  key: ExerciseKey;
-  name: string;
-  category: string;
-  primary: Target[];
-  cue: string;
-  steps: string[];
-  commonMistake: string;
-  phases: string[];
-  arrow: string;
-  reps: string;
-  form: string[];
-};
-
-// Targets are based on the standard biomechanics of each movement; exact activation varies with technique, grip, stance and load.
-const EXERCISES: Exercise[] = [
-  { key: "bench", name: "Bench Press (Barbell)", category: "Chest", primary: [{name:"Pectoralis major",role:"Primary",zone:"chest"},{name:"Triceps brachii",role:"Secondary",zone:"triceps"},{name:"Anterior deltoid",role:"Secondary",zone:"shoulders"}], cue: "Lower the bar with control toward the mid-to-lower chest, then press while keeping your wrists stacked over your forearms.", steps: ["Set your upper back on the bench and plant both feet firmly.", "Grip the bar evenly and lower it under control toward the mid-to-lower chest.", "Keep your forearms close to vertical and press the bar back up without bouncing.", "Re-rack only after the bar is stable and controlled."], commonMistake: "Letting the wrists fold back, bouncing the bar, or losing stable shoulder-blade position.", phases: ["Set position", "Lower", "Press", "Rack"], arrow: "↓  ↑", reps: "8–12 reps", form: ["Keep shoulder blades retracted and stable.", "Keep wrists stacked over elbows.", "Use a spotter or safety arms for challenging loads."] },
-  { key: "squat", name: "Squat (Bodyweight)", category: "Legs", primary: [{name:"Quadriceps",role:"Primary",zone:"quads"},{name:"Gluteus maximus",role:"Primary",zone:"glutes"},{name:"Adductor magnus",role:"Secondary",zone:"inner-thigh"},{name:"Hamstrings",role:"Secondary",zone:"hamstrings"}], cue: "Descend by bending the hips and knees together, keep the knees tracking with the toes, then stand by pushing through the whole foot.", steps: ["Stand with feet at a comfortable width and toes slightly turned out if natural.", "Brace gently and bend the hips and knees together while keeping the torso controlled.", "Descend only as far as you can keep balance, foot pressure and knee tracking.", "Drive through the whole foot to return to standing."], commonMistake: "Knees collapsing inward, heels lifting, or chasing depth at the expense of control.", phases: ["Stand", "Descend", "Bottom", "Stand"], arrow: "↓  ↑", reps: "8–12 reps", form: ["Keep the knees tracking in the same direction as the toes.", "Keep the whole foot connected to the floor.", "Use a comfortable depth you can control."] },
-  { key: "deadlift", name: "Deadlift (Barbell)", category: "Posterior Chain", primary: [{name:"Gluteus maximus",role:"Primary",zone:"glutes"},{name:"Hamstrings",role:"Primary",zone:"hamstrings"},{name:"Erector spinae",role:"Secondary",zone:"lower-back"},{name:"Latissimus dorsi",role:"Stabilizer",zone:"lats"}], cue: "Hinge at the hips with the bar close to your legs, brace your trunk, then stand by extending the hips and knees together.", steps: ["Set the bar over the middle of your feet and bring your shins close without forcing them forward.", "Hinge at the hips and take the bar with a stable grip while keeping your spine neutral.", "Push the floor away and keep the bar close as your hips and knees extend.", "Finish tall without leaning back, then hinge to lower the bar."], commonMistake: "Letting the bar drift away from the legs or rounding the back under load.", phases: ["Set up", "Hinge", "Stand", "Lower"], arrow: "↘  ↗", reps: "6–10 reps", form: ["Keep the bar close to the body.", "Brace before each rep.", "Stop the set if you cannot maintain your controlled position."] },
-  { key: "pushup", name: "Push-Up", category: "Chest", primary: [{name:"Pectoralis major",role:"Primary",zone:"chest"},{name:"Triceps brachii",role:"Secondary",zone:"triceps"},{name:"Anterior deltoid",role:"Secondary",zone:"shoulders"},{name:"Serratus anterior",role:"Stabilizer",zone:"ribs"}], cue: "Keep your body in one controlled line and lower your chest between your hands before pressing the floor away.", steps: ["Place hands slightly wider than shoulder width and set a stable plank.", "Brace your trunk and lower your chest with elbows angled comfortably from your sides.", "Keep hips and shoulders moving together as you descend.", "Press the floor away and return to the starting position."], commonMistake: "Letting the hips sag or pike, or rushing through the lowering phase.", phases: ["Plank", "Lower", "Bottom", "Press"], arrow: "↓  ↑", reps: "8–15 reps", form: ["Keep head, ribs and pelvis aligned.", "Use a range you can control.", "Regress to an elevated surface if needed."] },
-  { key: "row", name: "Dumbbell Row", category: "Back", primary: [{name:"Latissimus dorsi",role:"Primary",zone:"lats"},{name:"Rhomboids / mid trapezius",role:"Secondary",zone:"mid-back"},{name:"Posterior deltoid",role:"Secondary",zone:"rear-shoulder"},{name:"Biceps brachii",role:"Stabilizer",zone:"biceps"}], cue: "Hold a stable hinge and pull the dumbbell toward your hip without rotating your torso.", steps: ["Support yourself in a stable hinge with your spine neutral.", "Let the working arm reach without twisting your trunk.", "Pull the elbow toward your hip and pause briefly at the top.", "Lower the dumbbell slowly and repeat on the other side."], commonMistake: "Rotating the torso or shrugging to move a heavier weight.", phases: ["Hinge", "Reach", "Pull", "Lower"], arrow: "↗  ↘", reps: "8–12 / side", form: ["Keep hips and shoulders square.", "Pull with the elbow rather than curling the dumbbell.", "Use a load that allows a steady torso."] },
-  { key: "lunge", name: "Reverse Lunge", category: "Legs", primary: [{name:"Quadriceps",role:"Primary",zone:"quads"},{name:"Gluteus maximus",role:"Primary",zone:"glutes"},{name:"Hamstrings",role:"Secondary",zone:"hamstrings"},{name:"Adductors",role:"Stabilizer",zone:"inner-thigh"}], cue: "Step back far enough to keep the front foot stable, lower under control, then drive through the front foot.", steps: ["Stand tall with feet comfortably apart.", "Step one foot backward and lower both knees while keeping the front foot planted.", "Keep the front knee tracking with the front toes and torso controlled.", "Push through the front foot to return to standing."], commonMistake: "Taking an unstable step, letting the front knee collapse inward, or dropping too quickly.", phases: ["Stand", "Step back", "Lower", "Drive up"], arrow: "↙  ↗", reps: "8–12 / leg", form: ["Keep the front foot fully planted.", "Control the descent.", "Use support if balance is limiting your technique."] },
-];
-
-function speakExercise(exercise: Exercise) {
+function speakExercise(e: Exercise) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
-  const text = `${exercise.name}. ${exercise.cue} ${exercise.steps.join(" ")}`;
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 0.92;
-  window.speechSynthesis.speak(utterance);
+  const u = new SpeechSynthesisUtterance(`${e.name}. ${e.steps.join(" ")}`);
+  u.rate = 0.95;
+  window.speechSynthesis.speak(u);
 }
 
-function BodyModel({ exercise, playing, view, showMuscles, showArrows, phase }: { exercise: Exercise; playing: boolean; view: View; showMuscles: boolean; showArrows: boolean; phase: number }) {
-  const activeZone = exercise.primary[Math.min(phase === 1 || phase === 2 ? 0 : 0, exercise.primary.length - 1)].zone;
-  return (
-    <div className={`coach-3d coach-${exercise.key} coach-view-${view} ${playing ? "is-playing" : "is-paused"} ${showMuscles ? "show-muscles" : "hide-muscles"}`} aria-label={`Animated ${exercise.name} demonstration with highlighted target muscles`}>
-      <div className="coach-perspective">
-        <svg className="coach-body" viewBox="0 0 260 320" role="img" aria-hidden="true">
-          <defs><radialGradient id="skin" cx="35%" cy="30%"><stop offset="0" stopColor="#f4f4f4"/><stop offset="1" stopColor="#8c8c92"/></radialGradient><linearGradient id="suit" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#eee"/><stop offset=".6" stopColor="#9b9b9f"/><stop offset="1" stopColor="#505058"/></linearGradient></defs>
-          <ellipse className="coach-shadow" cx="130" cy="294" rx="78" ry="10" />
-          {(exercise.key === "bench") && <g className="coach-equipment"><rect x="48" y="188" width="164" height="16" rx="7"/><path d="M70 203L57 288M190 203L203 288M57 288H90M170 288H203"/><path d="M34 64V260M226 64V260M27 72H45M215 72H233M27 114H45M215 114H233"/><g className="bar"><rect x="22" y="60" width="216" height="6" rx="3"/><circle cx="32" cy="63" r="14"/><circle cx="228" cy="63" r="14"/></g></g>}
-          {(exercise.key === "squat") && <g className="coach-equipment squat-rack"><path d="M48 38V268M212 38V268M40 48H56M204 48H220M40 92H56M204 92H220"/><g className="bar"><rect x="34" y="73" width="192" height="6" rx="3"/><circle cx="43" cy="76" r="13"/><circle cx="217" cy="76" r="13"/></g></g>}
-          {(exercise.key === "deadlift") && <g className="coach-equipment floor-bar"><rect x="22" y="267" width="216" height="6" rx="3"/><circle cx="40" cy="270" r="22"/><circle cx="220" cy="270" r="22"/></g>}
-          <g className="coach-human">
-            <circle className="head" cx="130" cy="54" r="23"/><path className="neck" d="M119 73H141L146 89H114Z"/><path className="torso" d="M103 84Q130 72 157 84L174 157Q166 179 130 181Q94 179 86 157Z"/>
-            <path className={`muscle chest ${activeZone === "chest" ? "target-active" : ""}`} d="M91 105Q110 90 129 105Q130 127 111 130Q95 125 91 105ZM131 105Q150 90 169 105Q165 125 149 130Q130 127 131 105Z"/>
-            <path className={`muscle back ${activeZone === "lats" || activeZone === "mid-back" || activeZone === "lower-back" ? "target-active" : ""}`} d="M103 101Q130 88 157 101L151 146Q130 156 109 146Z"/>
-            <path className={`muscle core ${activeZone === "ribs" ? "target-active" : ""}`} d="M111 129H149L145 165Q130 173 115 165Z"/>
-            <path className={`muscle shoulders ${activeZone === "shoulders" || activeZone === "rear-shoulder" ? "target-active" : ""}`} d="M90 91Q104 83 112 95L106 117Q94 116 88 104Z M150 95Q158 83 171 91L173 104Q166 116 154 117Z"/>
-            <path className={`muscle biceps ${activeZone === "biceps" ? "target-active" : ""}`} d="M78 117L91 122L82 157Q75 165 69 158Z M169 122L182 117L191 158Q185 165 178 157Z"/>
-            <path className={`muscle triceps ${activeZone === "triceps" ? "target-active" : ""}`} d="M91 118L104 129L91 166Q84 171 80 162Z M156 129L169 118L180 162Q176 171 169 166Z"/>
-            <path className={`leg leg-left ${activeZone === "quads" ? "target-active" : ""}`} d="M108 166Q120 176 129 176L127 236L112 282Q106 292 95 288L91 280L105 229Z"/>
-            <path className={`leg leg-right ${activeZone === "quads" ? "target-active" : ""}`} d="M132 176Q141 176 152 166L155 229L169 280Q166 292 155 288L142 236Z"/>
-            <path className={`muscle glutes ${activeZone === "glutes" ? "target-active" : ""}`} d="M96 159Q130 150 164 159L157 190Q130 200 103 190Z"/>
-            <path className={`muscle hamstrings ${activeZone === "hamstrings" ? "target-active" : ""}`} d="M104 190L126 188L123 231L110 255L101 230Z M134 188L156 190L159 230L150 255L137 231Z"/>
-            <path className="foot" d="M91 279Q103 278 113 284L108 298H78Q77 286 91 279Z"/><path className="foot" d="M149 284Q159 278 170 279Q183 286 182 298H152Z"/>
-          </g>
-          {showArrows && <g className="coach-arrows"><path d={exercise.key === "row" ? "M205 180C228 150 228 118 205 100" : exercise.key === "deadlift" ? "M202 214C228 194 228 158 205 139" : "M205 126C229 145 229 179 207 196"}/><path d="M212 120L204 130L216 130"/><path d="M201 189L210 198L212 186"/></g>}
-        </svg>
-      </div>
-      <div className="movement-chip"><span>{exercise.phases[phase]}</span><strong>{exercise.arrow}</strong></div>
-    </div>
-  );
+/** Front/back anatomy maps (like the Targets thumbnails in the reference sheet). Rendered once per exercise. */
+let mapGL: CoachGL | null = null;
+function renderTargetMaps(roles: Roles): [string, string] | null {
+  try {
+    if (typeof document === "undefined") return null;
+    const cv = document.createElement("canvas");
+    cv.width = 180; cv.height = 300;
+    mapGL = new CoachGL(cv);
+    const leg = (sg: number) => ({ ankle: [sg * 0.13, 0.09, 0] as V3, pole: [0, 0.1, 1] as V3, foot: [sg * 0.2, 0, 1] as V3 });
+    const arm = (sg: number) => ({ grip: [sg * 0.33, 0.78, 0.0] as V3, pole: [0, -0.3, -1] as V3 });
+    const pose = assemble({ tau: 0, pelvis: [0, 0.955, 0], legs: [leg(1), leg(-1)], arms: [arm(1), arm(-1)], headFollow: 0 });
+    const prims: Prim[] = buildBody(pose, roles, true);
+    const out: string[] = [];
+    for (const yaw of [0, Math.PI]) {
+      mapGL.resize(180, 300, 1);
+      mapGL.render(prims, { target: [0, 0.92, 0], dist: 4.1, yaw, pitch: 0.02, fov: 0.5 });
+      out.push(cv.toDataURL("image/png"));
+    }
+    mapGL.dispose(); mapGL = null;
+    return [out[0], out[1]];
+  } catch { return null; }
 }
+
+interface Snap { t: number; d: number; seg: number; frac: number; rep: number; angles: number[] }
 
 export function ExerciseCoach({ onClose }: { onClose?: () => void }) {
   const [selected, setSelected] = useState<ExerciseKey>("bench");
   const [playing, setPlaying] = useState(true);
-  const [view, setView] = useState<View>("angle");
   const [speed, setSpeed] = useState(1);
-  const [showMuscles, setShowMuscles] = useState(true);
-  const [showArrows, setShowArrows] = useState(true);
-  const [rep, setRep] = useState(0);
-  const [phase, setPhase] = useState(0);
+  const [showTargets, setShowTargets] = useState(true);
+  const [showPath, setShowPath] = useState(true);
+  const [view, setView] = useState<CoachView>("angle");
   const [tab, setTab] = useState<"summary" | "howto">("summary");
-  const exercise = useMemo(() => EXERCISES.find((x) => x.key === selected) ?? EXERCISES[0], [selected]);
+  const [noGL, setNoGL] = useState(false);
+  const [snap, setSnap] = useState<Snap>({ t: 0, d: 0, seg: 0, frac: 0, rep: 0, angles: [] });
+  const [maps, setMaps] = useState<[string, string] | null>(null);
 
+  const ex = EX_BY_KEY[selected];
+  const T = useMemo(() => loopTime(ex), [ex]);
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const glRef = useRef<CoachGL | null>(null);
+  const live = useRef({ t: 0, selected, playing, speed, showTargets, showPath, view, yawOff: 0, pitchOff: 0 });
+  live.current.selected = selected; live.current.playing = playing; live.current.speed = speed;
+  live.current.showTargets = showTargets; live.current.showPath = showPath; live.current.view = view;
+  const pathCache = useRef<{ key: string; pts: V3[] }>({ key: "", pts: [] });
+
+  // WebGL setup (falls back to the reference photo if the device can't do WebGL)
   useEffect(() => {
-    if (!playing) return;
-    const timer = window.setInterval(() => setPhase((p) => { const next = (p + 1) % exercise.phases.length; if (next === 0) setRep((r) => r + 1); return next; }), Math.max(500, 1800 / speed));
-    return () => window.clearInterval(timer);
-  }, [playing, speed, exercise]);
+    const cv = canvasRef.current;
+    if (!cv) return;
+    try { glRef.current = new CoachGL(cv); setNoGL(false); } catch { glRef.current = null; setNoGL(true); }
+  }, []);
 
-  const select = (key: ExerciseKey) => { setSelected(key); setPlaying(true); setRep(0); setPhase(0); setTab("summary"); };
+  // Target anatomy thumbnails
+  useEffect(() => { setMaps(renderTargetMaps(ex.roles)); }, [ex]);
+
+  // Animation loop
+  useEffect(() => {
+    let raf = 0, last = performance.now(), lastUi = 0;
+    const reduce = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) setPlaying(false);
+    const frame = (now: number) => {
+      const L = live.current;
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      const e = EX_BY_KEY[L.selected];
+      if (L.playing) L.t += dt * L.speed;
+      const Tt = loopTime(e);
+      const { d, seg, frac } = sample(e, L.t);
+      const rep = Math.floor(L.t / Tt);
+      const b = e.build(d, rep);
+      const pose = assemble(b.spec);
+      const gl = glRef.current, cv = canvasRef.current, stage = stageRef.current;
+      if (gl && cv && stage) {
+        const w = stage.clientWidth, h = stage.clientHeight;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        gl.resize(w, h, dpr);
+        const prims: Prim[] = [cyl([e.cam.target[0], -0.004, e.cam.target[2]], [e.cam.target[0], 0, e.cam.target[2]], 0.95, M.floor)];
+        prims.push(...buildBody(pose, e.roles, L.showTargets), ...b.props(pose));
+        if (L.showPath) {
+          const ck = `${e.key}:${rep % 2}`;
+          if (pathCache.current.key !== ck) {
+            const pts: V3[] = [];
+            for (let i = 0; i <= 40; i++) { const bb = e.build(i / 40, rep); pts.push(bb.track(assemble(bb.spec))); }
+            pathCache.current = { key: ck, pts };
+          }
+          for (const p of pathCache.current.pts) prims.push(sphere(p, 0.011, M.purple));
+          prims.push(sphere(b.track(pose), 0.026, M.purple));
+        }
+        const asp = w / h;
+        const vf = Math.min(FOV, 2 * Math.atan(Math.tan(FOV / 2) * asp));
+        const dist = (e.cam.radius * 0.86) / Math.sin(vf / 2);
+        gl.render(prims, { target: e.cam.target, dist, yaw: YAW[L.view](e) + L.yawOff, pitch: Math.max(-0.2, Math.min(1.2, (L.view === "side" ? 0.08 : e.cam.pitch) + L.pitchOff)), fov: FOV });
+      }
+      if (now - lastUi > 90) {
+        lastUi = now;
+        setSnap({ t: L.t % Tt, d, seg, frac, rep, angles: e.watch.map((w) => w.read(pose)) });
+      }
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  // Drag to orbit
+  const drag = useRef<{ x: number; y: number } | null>(null);
+  const onDown = (ev: React.PointerEvent) => { drag.current = { x: ev.clientX, y: ev.clientY }; (ev.currentTarget as HTMLElement).setPointerCapture?.(ev.pointerId); };
+  const onMove = (ev: React.PointerEvent) => {
+    if (!drag.current) return;
+    live.current.yawOff -= (ev.clientX - drag.current.x) * 0.012;
+    live.current.pitchOff += (ev.clientY - drag.current.y) * 0.006;
+    drag.current = { x: ev.clientX, y: ev.clientY };
+  };
+  const onUp = () => { drag.current = null; };
+
+  const select = useCallback((key: ExerciseKey) => {
+    live.current.t = 0; live.current.yawOff = 0; live.current.pitchOff = 0;
+    pathCache.current = { key: "", pts: [] };
+    setSelected(key); setPlaying(true); setTab("summary"); setView("angle");
+  }, []);
+  const goSeg = (i: number) => {
+    const n = ex.segs.length, k = ((i % n) + n) % n;
+    live.current.t = segEnd(ex, k); live.current.playing = false; setPlaying(false);
+  };
+  const stepSeg = (delta: number) => goSeg(snap.seg + delta);
+  const scrub = (v: number) => { live.current.t = v * T; live.current.playing = false; setPlaying(false); };
+  const resetView = () => { live.current.yawOff = 0; live.current.pitchOff = 0; };
+  const setViewMode = (v: CoachView) => { setView(v); resetView(); };
+  const cycleSpeed = () => setSpeed((v) => (v === 1 ? 0.75 : v === 0.75 ? 0.5 : 1));
+
+  const byRole = (r: TargetRole) => ex.targets.filter((t) => t.role === r).map((t) => t.name).join(" · ");
+  const seg = ex.segs[snap.seg] ?? ex.segs[0];
+  const mm = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
   return (
-    <div className="exercise-coach-screen space-y-0 pb-8">
-      <div className="flex items-center justify-between px-1 pb-3"><div><p className="text-xs font-bold uppercase tracking-widest text-[#c99bf7]">Nova Exercise Coach</p><h2 className="text-2xl font-black text-white">Train with clear form cues</h2></div>{onClose && <Button variant="ghost" onClick={onClose}>Close</Button>}</div>
-      <div className="exercise-detail-shell overflow-hidden rounded-[24px] border border-white/10 bg-black">
-        <div className="exercise-reference-stage">
-          <div className="exercise-reference-status">{playing ? "LIVE DEMONSTRATION" : "PAUSED"}</div>
-          <BodyModel exercise={exercise} playing={playing} view={view} showMuscles={showMuscles} showArrows={showArrows} phase={phase}/>
-          <button className="exercise-reference-pause" onClick={() => setPlaying((v) => !v)}>{playing ? "Ⅱ" : "▶"}</button>
-          <div className="exercise-reference-views">{(["front","angle","side"] as View[]).map(v => <button key={v} onClick={() => setView(v)} className={view===v?"active":""}>{v}</button>)}</div>
+    <div className="cc-root pb-8">
+      <div className="cc-head">
+        <div><p className="cc-eyebrow">Nova Exercise Coach</p><h2>Perfect form. Maximum results.</h2></div>
+        {onClose && <Button variant="ghost" onClick={onClose}>Close</Button>}
+      </div>
+
+      <div className="cc-card">
+        <div className="cc-stage" ref={stageRef}>
+          {noGL ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="cc-fallback" src={`/exercise-models/${ex.key}.jpg`} alt={`${ex.name} reference`} />
+          ) : (
+            <canvas ref={canvasRef} className="cc-canvas" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} aria-label={`${ex.name} 3D demonstration. Drag to rotate.`} />
+          )}
+          <div className="cc-status"><span className={playing ? "on" : ""}>{playing ? "LIVE" : "PAUSED"}</span><b>{seg.name}</b></div>
+          <div className="cc-count">{ex.isHold ? <><small>HOLD</small><b>{mm(snap.rep * T + snap.t)}</b></> : <><small>REP</small><b>{snap.rep}</b></>}</div>
+          <button type="button" className="cc-fab" onClick={() => setPlaying((v) => !v)} aria-label={playing ? "Pause demonstration" : "Play demonstration"}>{playing ? "Ⅱ" : "▶"}</button>
+          {noGL && <div className="cc-nogl">3D view isn’t supported on this device, showing the reference image instead.</div>}
+          <div className="cc-hint">Drag to rotate</div>
         </div>
-        <div className="exercise-reference-info">
-          <div className="flex items-start justify-between gap-4"><div><h1 className="text-[24px] font-black tracking-tight text-white sm:text-[30px]">{exercise.name}</h1><p className="mt-1 text-sm text-neutral-400">Primary: {exercise.primary.filter(t=>t.role==="Primary").map(t=>t.name).join(" · ")}</p><p className="text-sm text-neutral-500">Secondary: {exercise.primary.filter(t=>t.role==="Secondary").map(t=>t.name).join(" · ")}</p></div><button className="coach-voice" onClick={() => speakExercise(exercise)} aria-label="Hear Nova explain">🔊</button></div>
-          <div className="exercise-tabs"><button onClick={()=>setTab("summary")} className={tab==="summary"?"active":""}>Summary</button><button onClick={()=>setTab("howto")} className={tab==="howto"?"active":""}>How to</button></div>
-          {tab === "summary" ? <>
-            <div className="exercise-target-panel"><div className="exercise-section-label">Target muscles</div><div className="target-list">{exercise.primary.map(t=><div key={t.name} className="target-row"><span className={`target-dot ${t.role.toLowerCase()}`}/><div><b>{t.role}: {t.name}</b><small>{t.zone.replaceAll("-"," ")}</small></div></div>)}</div></div>
-            <div className="exercise-form-panel"><div className="exercise-section-label">Form cues</div>{exercise.form.map(f=><div key={f} className="form-check">✓ <span>{f}</span></div>)}</div>
-          </> : <div className="exercise-howto-panel"><div className="exercise-section-label">How to perform</div>{exercise.steps.map((s,i)=><div key={s} className={`howto-step ${phase===i?"current":""}`} onClick={()=>{setPhase(i);setPlaying(false)}}><span>{i+1}</span><p>{s}</p></div>)}</div>}
-          <div className="exercise-control-row"><button onClick={()=>setPlaying(v=>!v)}>{playing?"Pause":"Play"}</button><button onClick={()=>setSpeed(v=>v===1?0.5:v===0.5?0.25:1)}>{speed}×</button><button className={showMuscles?"active":""} onClick={()=>setShowMuscles(v=>!v)}>Muscles</button><button className={showArrows?"active":""} onClick={()=>setShowArrows(v=>!v)}>Motion</button><span>REP <b>{rep}</b></span></div>
-          <p className="exercise-safety-note">Use an appropriate resistance and a controlled range. Nova can demonstrate technique, but it cannot guarantee injury prevention. Stop for sharp pain, dizziness or unusual symptoms and ask a qualified professional when needed.</p>
+
+        <div className="cc-scrub">
+          <button type="button" onClick={() => stepSeg(-1)} aria-label="Previous phase">‹</button>
+          <input type="range" min={0} max={1000} value={Math.round((snap.t / T) * 1000)} onChange={(e) => scrub(Number(e.target.value) / 1000)} aria-label="Scrub through the rep" />
+          <button type="button" onClick={() => stepSeg(1)} aria-label="Next phase">›</button>
+        </div>
+        <div className="cc-rail" role="tablist" aria-label="Movement phases">
+          {ex.segs.map((s, i) => <button type="button" role="tab" aria-selected={snap.seg === i} key={s.name + i} className={snap.seg === i ? "active" : ""} onClick={() => goSeg(i)}><i />{s.name}</button>)}
+        </div>
+
+        <div className="cc-controls">
+          <button type="button" onClick={() => setPlaying((v) => !v)}>{playing ? "Pause" : "Play"}</button>
+          <button type="button" onClick={cycleSpeed} aria-label="Change playback speed">Speed {speed}×</button>
+          <button type="button" className={showTargets ? "active" : ""} aria-pressed={showTargets} onClick={() => setShowTargets((v) => !v)}>Targets</button>
+          <button type="button" className={showPath ? "active" : ""} aria-pressed={showPath} onClick={() => setShowPath((v) => !v)}>Path</button>
+          {(["front", "angle", "side"] as CoachView[]).map((v) => <button type="button" key={v} className={view === v ? "active" : ""} aria-pressed={view === v} onClick={() => setViewMode(v)}>{v[0].toUpperCase() + v.slice(1)}</button>)}
+          <button type="button" onClick={resetView}>Reset view</button>
+        </div>
+
+        <div className="cc-cuebox" aria-live="polite"><small>{seg.name}</small><p>{seg.cue}</p></div>
+
+        <div className="cc-angles">
+          {ex.watch.map((w, i) => <div key={w.label}><small>{w.label}</small><b>{snap.angles[i] !== undefined ? Math.round(snap.angles[i]) : "–"}{w.unit ?? ""}</b></div>)}
         </div>
       </div>
-      <div className="exercise-library-strip"><div className="text-[10px] font-black uppercase tracking-[.18em] text-neutral-500">Exercise library</div><div className="exercise-library-row">{EXERCISES.map(item=><button key={item.key} onClick={()=>select(item.key)} className={selected===item.key?"active":""}><span>{item.name}</span><small>{item.category}</small></button>)}</div></div>
+
+      <div className="cc-card cc-info">
+        <div className="cc-titlerow">
+          <div><h1>{ex.name}</h1><span className="cc-cat">{ex.category}</span></div>
+          <button type="button" className="cc-voice" onClick={() => speakExercise(ex)} aria-label="Hear Nova explain this exercise">🔊</button>
+        </div>
+        <div className="cc-pills"><span>{ex.sets}</span><span>{ex.reps}</span></div>
+
+        <div className="cc-targets">
+          <div className="cc-maps">
+            {maps ? <>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={maps[0]} alt="Front view of targeted muscles" /><img src={maps[1]} alt="Back view of targeted muscles" /></> : <div className="cc-map-empty">Target map unavailable</div>}
+          </div>
+          <ul>
+            {(["Primary", "Secondary", "Tertiary"] as TargetRole[]).map((r) => <li key={r}><i style={{ background: ROLE_COLOR[r] }} /><span><b>{r}:</b> {byRole(r)}</span></li>)}
+          </ul>
+        </div>
+
+        <div className="cc-tabs"><button type="button" className={tab === "summary" ? "active" : ""} onClick={() => setTab("summary")}>Summary</button><button type="button" className={tab === "howto" ? "active" : ""} onClick={() => setTab("howto")}>How to</button></div>
+        {tab === "summary" ? (
+          <div className="cc-list">
+            <h3>Form cues</h3>
+            {ex.form.map((f) => <p key={f}><span>✓</span>{f}</p>)}
+            <h3>Common mistake</h3>
+            <p className="warn"><span>!</span>{ex.mistake}</p>
+          </div>
+        ) : (
+          <div className="cc-list">
+            <h3>How to perform</h3>
+            {ex.steps.map((s, i) => <button type="button" key={s} className={`cc-step ${snap.seg === i ? "current" : ""}`} onClick={() => goSeg(i)}><span>{i + 1}</span><p>{s}</p></button>)}
+          </div>
+        )}
+        <div className="cc-safety"><b>Before you copy this</b><p>This is a guide built from standard coaching technique, not a measurement of your body. It can’t see your mobility, load, balance or equipment, and following it can’t guarantee you won’t get hurt. Start light, use a spotter or safety arms for heavy lifts, keep the movement controlled, and stop if anything hurts. A qualified coach can check your form in person.</p></div>
+      </div>
+
+      <div className="cc-library">
+        <div className="cc-eyebrow">Exercise library</div>
+        <div className="cc-libgrid">
+          {EXERCISES.map((item) => <button type="button" key={item.key} className={selected === item.key ? "active" : ""} onClick={() => select(item.key)}><span>{item.name}</span><small>{item.category}</small></button>)}
+        </div>
+      </div>
     </div>
   );
 }
